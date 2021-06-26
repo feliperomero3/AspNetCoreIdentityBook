@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>aspnet-IdentityApp-A703DF20-F7C4-461E-8E9A-6F360033116D</UserSecretsId>
+    <UserSecretsId>IdentityApp</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
