@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using IdentityApp.Data;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -13,7 +11,33 @@ namespace IdentityApp
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            using var scope = host.Services.CreateScope();
+
+            var services = scope.ServiceProvider;
+
+            var environment = services.GetRequiredService<IWebHostEnvironment>();
+
+            if (environment.IsDevelopment())
+            {
+                try
+                {
+                    var context = services.GetRequiredService<ApplicationDbContext>();
+
+                    ApplicationDbContextSeedData.SeedDatabase(context);
+                }
+                catch (Exception e)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+
+                    logger.LogError(e, "An error occurred creating the database.");
+
+                    throw;
+                }
+            }
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
