@@ -2,16 +2,16 @@
 {
     public class Product
     {
-        private Product()
-        {
-        }
-
         public Product(string name, string description, string category, decimal price) : this()
         {
             Name = name;
             Category = category;
             Description = description;
             Price = price;
+        }
+
+        private Product()
+        {
         }
 
         public long ProductId { get; private set; }
