@@ -1,0 +1,31 @@
+﻿@page "/pages/store"
+@model IdentityApp.Pages.StoreModel
+@{
+    ViewData["Title"] = "Store page";
+}
+
+<h4 class="bg-info text-white text-center p-2">Level 2 - Signed In Users</h4>
+
+<div class="p-2">
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th class="text-right">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.Products.OrderBy(p => p.ProductId))
+            {
+                <tr>
+                    <td>@p.ProductId</td>
+                    <td>@p.Name</td>
+                    <td>@p.Category</td>
+                    <td class="text-right">$@p.Price.ToString("F2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
