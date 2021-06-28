@@ -25,7 +25,7 @@ namespace IdentityApp
                 {
                     var context = services.GetRequiredService<ApplicationDbContext>();
 
-                    ApplicationDbContextSeedData.SeedDatabase(context);
+                    ApplicationDbSeedData.SeedDatabase(context);
                 }
                 catch (Exception e)
                 {
