@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using IdentityApp.Data;
+using IdentityApp.Entities;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using SportsStore.Entities;
 
 namespace IdentityApp.Pages
 {

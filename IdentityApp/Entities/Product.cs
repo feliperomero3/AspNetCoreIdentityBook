@@ -1,4 +1,4 @@
-﻿namespace SportsStore.Entities
+﻿namespace IdentityApp.Entities
 {
     public class Product
     {

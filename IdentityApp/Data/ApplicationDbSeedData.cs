@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using SportsStore.Entities;
+using IdentityApp.Entities;
 
 namespace IdentityApp.Data
 {
