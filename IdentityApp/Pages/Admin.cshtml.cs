@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using IdentityApp.Data;
 using IdentityApp.Entities;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -18,6 +19,7 @@ namespace IdentityApp.Pages
 
         public void OnGet()
         {
+            Products = _context.Products.AsEnumerable();
         }
 
         public void OnPost(long id)
