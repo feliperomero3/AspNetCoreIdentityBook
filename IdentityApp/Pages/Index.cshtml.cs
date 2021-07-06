@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using IdentityApp.Data;
-using IdentityApp.Entities;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
@@ -18,13 +16,11 @@ namespace IdentityApp.Pages
             _logger = logger;
         }
 
-        public IEnumerable<Product> Products { get; set; }
+        public long ProductsCount { get; set; }
 
-        public PageResult OnGet()
+        public void OnGet()
         {
-            Products = _context.Products.ToArray();
-
-            return Page();
+            ProductsCount = _context.Products.Count();
         }
     }
 }
