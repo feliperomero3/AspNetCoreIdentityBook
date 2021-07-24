@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using IdentityApp.Data;
 using IdentityApp.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace IdentityApp.Pages
 {
+    [Authorize(Roles = "Admin")]
     public class AdminModel : PageModel
     {
         private readonly ApplicationDbContext _context;
