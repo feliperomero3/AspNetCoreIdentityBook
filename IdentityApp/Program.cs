@@ -31,7 +31,7 @@ namespace IdentityApp
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
 
-                    logger.LogError(e, "An error occurred creating the database.");
+                    logger.LogError(e, "An error occurred while creating the database.");
 
                     throw;
                 }
