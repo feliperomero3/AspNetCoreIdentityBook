@@ -1,5 +1,7 @@
 # IdentityApp
 
+[![.NET][ci-badge]][ci-status]
+
 Based on the Web Application built in the Book ['Pro ASP.NET Core Identity'](https://www.apress.com/la/book/9781484268575) by Adam Freeman (Apress, 2021).
 
 This application showcases features that can be accessed by anyone, features that can be accessed only once a user signs in, and features that can be accessed only by administrators.
@@ -19,3 +21,6 @@ This application showcases features that can be accessed by anyone, features tha
 [MIT License](LICENSE)
 
 Copyright (c) 2021 Felipe Romero
+
+[ci-status]: https://github.com/feliperomero3/IdentityApp/actions/workflows/dotnet.yml
+[ci-badge]: https://github.com/feliperomero3/IdentityApp/actions/workflows/dotnet.yml/badge.svg
