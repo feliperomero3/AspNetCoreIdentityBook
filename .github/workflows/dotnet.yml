@@ -10,7 +10,8 @@ jobs:
   build:
     runs-on: windows-2019
     steps:
-    - uses: actions/checkout@v2
+    - name: Clone repository
+      uses: actions/checkout@v2
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
@@ -19,4 +20,3 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration release --no-restore
-
