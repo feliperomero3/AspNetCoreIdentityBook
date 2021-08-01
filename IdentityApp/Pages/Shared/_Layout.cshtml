@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - IdentityApp</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <script type="text/javascript" src="~/lib/qrcodejs/qrcode.min.js"></script>
 </head>
 <body>
     <header>
@@ -38,11 +39,20 @@
             &copy; 2021 - IdentityApp - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
+    <script type="text/javascript">
+        var element = document.getElementById('qrCode');
+        if (element != null) {
+            new QRCode(element, {
+                text: document.getElementById('qrCodeData').getAttribute('data-url'), width: 150, height: 150
+            });
+            element.previousElementSibling?.remove();
+            element.setAttribute("class", "mb-3");
+        }
+    </script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
