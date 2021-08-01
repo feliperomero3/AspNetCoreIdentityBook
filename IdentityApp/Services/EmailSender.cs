@@ -19,7 +19,9 @@ namespace IdentityApp.Services
             MailAddress to = new MailAddress(email);
             MailMessage message = new MailMessage(from, to)
             {
-                Body = subject
+                Subject = subject,
+                Body = htmlMessage,
+                IsBodyHtml = true
             };
 
             _smtpClient.Send(message);
