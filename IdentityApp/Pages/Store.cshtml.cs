@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using IdentityApp.Data;
-using IdentityApp.Entities;
+using IdentityApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -17,11 +17,20 @@ namespace IdentityApp.Pages
             _context = context;
         }
 
-        public IEnumerable<Product> Products { get; set; }
+        public IEnumerable<ProductModel> Products { get; set; }
 
         public void OnGet()
         {
-            Products = _context.Products.AsEnumerable();
+            var products = _context.Products.AsEnumerable();
+
+            Products = products.Select(p => new ProductModel
+            {
+                ProductId = p.ProductId,
+                Name = p.Name,
+                Description = p.Description,
+                Category = p.Category,
+                Price = p.Price
+            });
         }
     }
 }
