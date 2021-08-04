@@ -51,6 +51,11 @@ namespace IdentityApp
                 {
                     options.AppId = Configuration["Facebook:AppId"];
                     options.AppSecret = Configuration["Facebook:AppSecret"];
+                })
+                .AddGoogle(options =>
+                {
+                    options.ClientId = Configuration["Google:ClientId"];
+                    options.ClientSecret = Configuration["Google:ClientSecret"];
                 });
         }
 
