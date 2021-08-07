@@ -35,8 +35,8 @@ namespace IdentityApp
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
-            })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
+
             services.AddRazorPages();
             services.AddTransient(_ =>
                 {
@@ -56,6 +56,11 @@ namespace IdentityApp
                 {
                     options.ClientId = Configuration["Google:ClientId"];
                     options.ClientSecret = Configuration["Google:ClientSecret"];
+                }).
+                AddTwitter(options =>
+                {
+                    options.ConsumerKey = Configuration["Twitter:ApiKey"];
+                    options.ConsumerSecret = Configuration["Twitter:ApiSecret"];
                 });
         }
 
