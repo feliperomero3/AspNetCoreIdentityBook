@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Libman output
+/Output-LibraryManager.txt
+
+# Third-party libraries
+**/lib/fontawesome-free
