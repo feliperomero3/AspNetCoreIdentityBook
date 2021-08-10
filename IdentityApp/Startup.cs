@@ -1,4 +1,5 @@
 using System.Net.Mail;
+using IdentityApp.Configuration;
 using IdentityApp.Data;
 using IdentityApp.Services;
 using Microsoft.AspNetCore.Builder;
@@ -38,12 +39,7 @@ namespace IdentityApp
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddRazorPages();
-            services.AddTransient(_ =>
-                {
-                    var hostname = Configuration["SmtpSettings:Hostname"];
-                    var port = int.Parse(Configuration["SmtpSettings:Port"]);
-                    return new SmtpClient(hostname, port);
-                });
+            services.AddScoped<SmtpClient>();
             services.AddScoped<IEmailSender, EmailSender>();
 
             services.AddAuthentication()
@@ -62,6 +58,8 @@ namespace IdentityApp
                     options.ConsumerKey = Configuration["Twitter:ApiKey"];
                     options.ConsumerSecret = Configuration["Twitter:ApiSecret"];
                 });
+
+            services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
