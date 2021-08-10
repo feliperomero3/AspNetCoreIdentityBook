@@ -13,7 +13,7 @@ namespace IdentityApp.Services
             _smtpClient = smtpClient;
         }
 
-        public Task SendEmailAsync(string email, string subject, string htmlMessage)
+        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
             MailAddress from = new MailAddress("identityapp@localhost");
             MailAddress to = new MailAddress(email);
@@ -24,9 +24,7 @@ namespace IdentityApp.Services
                 IsBodyHtml = true
             };
 
-            _smtpClient.Send(message);
-
-            return Task.CompletedTask;
+            await _smtpClient.SendMailAsync(message);
         }
     }
 }
