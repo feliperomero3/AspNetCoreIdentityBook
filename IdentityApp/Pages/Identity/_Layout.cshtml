@@ -1,0 +1,61 @@
+﻿@{
+    string theme = ViewData["theme"] as string ?? "primary";
+    bool showNav = ViewData["showNav"] as bool? ?? true;
+    string navPartial = ViewData["navPartial"] as string ?? "_Workflows";
+    string workflow = ViewData["workflow"] as string;
+    string banner = ViewData["banner"] as string ?? "User Dashboard";
+    bool showHeader = ViewData["showHeader"] as bool? ?? true;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@banner - IdentityApp</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    @if (showHeader)
+    {
+        <header>
+            <nav class="navbar navbar-light navbar-expand-sm navbar-toggleable-sm border-bottom bg-@theme">
+                <div class="container">
+                    <a class="navbar-brand text-white" asp-page="/Index">IdentityApp</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-page="/Index">Home</a>
+                            </li>
+                        </ul>
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </nav>
+        </header>
+    }
+    <h4 class="bg-@theme text-center text-white p-2">@banner</h4>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="row">
+                @if (showNav)
+                {
+                    <div class="col-auto">
+                        <partial name="@navPartial" model="@((workflow, theme))" />
+                    </div>
+                }
+                <div class="col">
+                    @RenderBody()
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+    <script src="~/js/site.js" asp-append-version="true" type="text/javascript"></script>
+</body>
+</html>
