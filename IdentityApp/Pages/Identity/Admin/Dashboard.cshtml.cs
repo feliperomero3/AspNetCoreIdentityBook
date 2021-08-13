@@ -22,10 +22,17 @@ namespace IdentityApp.Pages.Identity.Admin
 
         public void OnGet()
         {
+            UsersCount = _userManager.Users.Count();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            foreach (IdentityUser existingUser in _userManager.Users.ToList())
+            {
+                var result = await _userManager.DeleteAsync(existingUser);
+
+                ProcessIdentityOperationResult(result);
+            }
             foreach (string email in emails)
             {
                 var user = new IdentityUser
@@ -37,18 +44,18 @@ namespace IdentityApp.Pages.Identity.Admin
 
                 var result = await _userManager.CreateAsync(user);
 
-                if (result.Succeeded)
-                {
-                    return RedirectToPage();
-                }
-
-                foreach (IdentityError error in result.Errors ?? Enumerable.Empty<IdentityError>())
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                ProcessIdentityOperationResult(result);
             }
 
             return Page();
+        }
+
+        private void ProcessIdentityOperationResult(IdentityResult result)
+        {
+            foreach (IdentityError error in result.Errors ?? Enumerable.Empty<IdentityError>())
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
         }
     }
 }
