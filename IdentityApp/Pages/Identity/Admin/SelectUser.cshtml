@@ -1,0 +1,60 @@
+﻿@page "{label?}/{callback?}"
+@model SelectUserModel
+@{
+    ViewBag.Workflow = Model.Callback ?? Model.Label ?? "List";
+}
+
+<form class="my-2" method="post">
+    <div class="form-row">
+        <div class="col">
+            <div class="input-group">
+                <input class="form-control" title="User email" asp-for="Filter" type="text" value="" />
+            </div>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-secondary">Filter</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-sm table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>User</th>
+            @if (!string.IsNullOrEmpty(Model.Callback))
+            {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Users.Any())
+        {
+            <tr>
+                <td>No matches</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var user in Model.Users)
+            {
+                <tr>
+                    <td>@user.Email</td>
+                    @if (!string.IsNullOrEmpty(Model.Callback))
+                    {
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-secondary" asp-page="@Model.Callback" asp-route-id="@user.Id">
+                                @Model.Callback
+                            </a>
+                        </td>
+                    }
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (!string.IsNullOrEmpty(Model.Callback))
+{
+    <a asp-page="Dashboard" class="btn btn-secondary">Cancel</a>
+}

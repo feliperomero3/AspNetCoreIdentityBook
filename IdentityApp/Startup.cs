@@ -52,8 +52,8 @@ namespace IdentityApp
                 {
                     options.ClientId = Configuration["Google:ClientId"];
                     options.ClientSecret = Configuration["Google:ClientSecret"];
-                }).
-                AddTwitter(options =>
+                })
+                .AddTwitter(options =>
                 {
                     options.ConsumerKey = Configuration["Twitter:ApiKey"];
                     options.ConsumerSecret = Configuration["Twitter:ApiSecret"];
