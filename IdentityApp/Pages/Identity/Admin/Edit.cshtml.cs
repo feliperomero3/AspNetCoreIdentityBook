@@ -22,9 +22,6 @@ namespace IdentityApp.Pages.Identity.Admin
         public class EditBindingTarget
         {
             [Required]
-            public string Username { get; set; }
-
-            [Required]
             [EmailAddress]
             public string Email { get; set; }
 
@@ -50,7 +47,7 @@ namespace IdentityApp.Pages.Identity.Admin
 
                 if (user != null)
                 {
-                    user.UserName = userData.Username;
+                    user.UserName = userData.Email;
                     user.Email = userData.Email;
                     user.EmailConfirmed = true;
 
