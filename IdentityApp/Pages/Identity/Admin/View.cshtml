@@ -1,0 +1,28 @@
+﻿@page "{Id?}"
+@model ViewModel
+@{
+    ViewBag.Workflow = "List";
+}
+
+<table class="table table-sm table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (string name in Model.PropertyNames)
+        {
+            <tr>
+                <td>@name</td>
+                <td class="text-truncate">
+                    @Model.GetPropertyValue(name)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-secondary" asp-page="Edit" asp-route-id="@Model.Id">Edit</a>
+<a class="btn btn-secondary" asp-page="View">Back</a>
