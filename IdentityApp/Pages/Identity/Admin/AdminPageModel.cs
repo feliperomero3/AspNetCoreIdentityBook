@@ -1,9 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace IdentityApp.Pages.Identity.Admin
 {
     public class AdminPageModel : PageModel
     {
-        // no methods or properties required
+        public void ProcessIdentityOperationResult(IdentityResult result)
+        {
+            foreach (IdentityError error in result.Errors ?? Enumerable.Empty<IdentityError>())
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+        }
     }
 }

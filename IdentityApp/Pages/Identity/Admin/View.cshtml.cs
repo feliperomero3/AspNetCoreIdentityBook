@@ -24,7 +24,7 @@ namespace IdentityApp.Pages.Identity.Admin
 
         public string GetPropertyValue(string name) => typeof(IdentityUser).GetProperty(name).GetValue(IdentityUser)?.ToString();
 
-        public async Task<ActionResult> OnGet()
+        public async Task<ActionResult> OnGetAsync()
         {
             if (string.IsNullOrEmpty(Id))
             {
