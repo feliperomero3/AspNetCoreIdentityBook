@@ -1,0 +1,23 @@
+﻿@page
+@model FeaturesModel
+@{
+    ViewBag.Workflow = "Features";
+}
+
+<table class="table table-sm table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Supported</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ((string propertyName, string propertyValue) in Model.Features)
+        {
+            <tr>
+                <td>@propertyName</td>
+                <td class="@(propertyValue == "True" ? "bg-success" : "bg-danger") text-white">@propertyValue</td>
+            </tr>
+        }
+    </tbody>
+</table>

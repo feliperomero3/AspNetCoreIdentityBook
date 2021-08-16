@@ -9,7 +9,7 @@ This application showcases features that can be accessed by anyone, features tha
 ## Prerequisites
 
 - Visual Studio 2019 v16.10.x
-- smtp4dev v3.1.3.2 
+- smtp4dev v3.1.3.2
 
 ## Getting started
 
