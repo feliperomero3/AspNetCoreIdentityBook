@@ -16,6 +16,7 @@ This application showcases features that can be accessed by anyone, features tha
 1. Clone the project.
 2. Open the solution file `IdentityApp.sln` with Visual Studio 2019.
 3. Press F5 to start the application.
+4. Open your browser and go to https://localhost:44350
 
 ## License
 
