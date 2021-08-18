@@ -3,5 +3,4 @@
 
 // Write your JavaScript code.
 $(function () {
-  $('.nav-link').addClass('text-white');
 });

@@ -74,3 +74,10 @@ body {
 table .text-truncate {
     max-width: 250px;
 }
+
+/* Identity Login Partial */
+.navbar-nav .nav-item .nav-link.bg-secondary.text-white {
+    border-width: 2px;
+    border-style: outset;
+    border-color: #6c757d;
+}

@@ -59,6 +59,13 @@ namespace IdentityApp
                     options.ConsumerSecret = Configuration["Twitter:ApiSecret"];
                 });
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/SignIn";
+                options.LogoutPath = "/Identity/SignOut";
+                options.AccessDeniedPath = "/Identity/Forbidden";
+            });
+
             services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
         }
 
