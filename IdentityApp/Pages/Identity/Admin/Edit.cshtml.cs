@@ -63,7 +63,7 @@ namespace IdentityApp.Pages.Identity.Admin
                         return RedirectToPage();
                     }
 
-                    ProcessIdentityOperationResult(result);
+                    result.ProcessOperationResult(ModelState);
                 }
             }
 

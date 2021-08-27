@@ -31,7 +31,7 @@ namespace IdentityApp.Pages.Identity.Admin
             {
                 var result = await _userManager.DeleteAsync(existingUser);
 
-                ProcessIdentityOperationResult(result);
+                result.ProcessOperationResult(ModelState);
             }
             foreach (string email in emails)
             {
@@ -49,7 +49,7 @@ namespace IdentityApp.Pages.Identity.Admin
                     result = await _userManager.AddPasswordAsync(user, "mysecret");
                 }
 
-                ProcessIdentityOperationResult(result);
+                result.ProcessOperationResult(ModelState);
             }
 
             return Page();
