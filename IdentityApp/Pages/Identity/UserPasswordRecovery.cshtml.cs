@@ -1,13 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using IdentityApp.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace IdentityApp.Pages.Identity
 {
-    public class UserPasswordRecoveryModel : PageModel
+    [AllowAnonymous]
+    public class UserPasswordRecoveryModel : UserPageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IdentityEmailService _emailService;
