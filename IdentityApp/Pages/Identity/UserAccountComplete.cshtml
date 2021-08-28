@@ -1,0 +1,36 @@
+﻿@page
+@model UserAccountCompleteModel
+@{
+    ViewData["showNav"] = false;
+    ViewData["banner"] = "Complete Account";
+}
+
+@if (string.IsNullOrEmpty(Model.Token) || string.IsNullOrEmpty(Model.Email))
+{
+    <div class="h6 text-center">
+        <div class="p-2">
+            Check your inbox for a confirmation email and click the link it contains.
+        </div>
+    </div>
+}
+else
+{
+    <div asp-validation-summary="All" class="text-danger m-2"></div>
+
+    <form method="post">
+        <input type="hidden" asp-for="Token" />
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input class="form-control" type="email" asp-for="Email" readonly />
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input class="form-control" type="password" name="password" />
+        </div>
+        <div class="form-group">
+            <label for="confirmpassword">Confirm Password</label>
+            <input class="form-control" type="password" name="confirmpassword" />
+        </div>
+        <button class="btn btn-primary" type="submit">Finish and Sign In</button>
+    </form>
+}
