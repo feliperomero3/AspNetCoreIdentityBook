@@ -3,18 +3,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace IdentityApp.Pages.Identity
 {
     [AllowAnonymous]
-    public class SignInModel : PageModel
+    public class SignInModel : UserPageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public SignInModel(SignInManager<IdentityUser> signInManager)
+        public SignInModel(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         [Required]
@@ -41,11 +42,23 @@ namespace IdentityApp.Pages.Identity
                 }
                 else if (result.IsLockedOut)
                 {
-                    TempData["message"] = "Account Locked";
+                    TempData["message"] = "Account Locked.";
                 }
                 else if (result.IsNotAllowed)
                 {
-                    TempData["message"] = "Sign In Not Allowed";
+                    TempData["message"] = "Sign In Not Allowed.";
+
+                    var user = await _userManager.FindByEmailAsync(Email);
+
+                    if (user != null)
+                    {
+                        var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+
+                        if (!isEmailConfirmed)
+                        {
+                            return RedirectToPage("SignUpConfirm");
+                        }
+                    }
                 }
                 else if (result.RequiresTwoFactor)
                 {
@@ -53,7 +66,7 @@ namespace IdentityApp.Pages.Identity
                 }
                 else
                 {
-                    TempData["message"] = "Sign In Failed";
+                    TempData["message"] = "Sign In Failed.";
                 }
             }
 
