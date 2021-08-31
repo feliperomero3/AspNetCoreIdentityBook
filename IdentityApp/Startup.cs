@@ -1,3 +1,4 @@
+using System;
 using System.Net.Mail;
 using IdentityApp.Configuration;
 using IdentityApp.Data;
@@ -37,6 +38,8 @@ namespace IdentityApp
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
             }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+            services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(1));
 
             services.AddScoped<TokenUrlEncoderService>();
             services.AddScoped<IdentityEmailService>();

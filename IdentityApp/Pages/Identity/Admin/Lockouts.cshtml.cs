@@ -37,8 +37,8 @@ namespace IdentityApp.Pages.Identity.Admin
             var user = await _userManager.FindByIdAsync(id);
 
             await _userManager.SetLockoutEnabledAsync(user, true);
-
             await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.Now.AddDays(5));
+            await _userManager.UpdateSecurityStampAsync(user);
 
             return RedirectToPage();
         }
