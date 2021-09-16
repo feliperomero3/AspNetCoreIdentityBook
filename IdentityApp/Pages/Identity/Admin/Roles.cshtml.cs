@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityApp.Pages.Identity.Admin
 {
@@ -11,17 +12,23 @@ namespace IdentityApp.Pages.Identity.Admin
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IConfiguration _configuration;
 
-        public RolesModel(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public RolesModel(UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _configuration = configuration;
         }
 
         [BindProperty(SupportsGet = true)]
         public string Id { get; set; }
 
         public IEnumerable<IdentityRole> Roles => _roleManager.Roles.AsEnumerable();
+
+        public string DashboardRole => _configuration["Dashboard:Role"] ?? "Dashboard";
 
         public IList<string> CurrentRoles { get; set; }
         public IList<string> AvailableRoles { get; set; }
@@ -104,6 +111,11 @@ namespace IdentityApp.Pages.Identity.Admin
 
         public async Task<ActionResult> OnPostDeleteAsync(string role)
         {
+            if (DashboardRole.Equals(role, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return NotFound();
+            }
+
             var user = await _userManager.FindByIdAsync(Id);
 
             if (await _userManager.IsInRoleAsync(user, role))
