@@ -26,6 +26,8 @@ namespace IdentityApp
                     var context = services.GetRequiredService<ApplicationDbContext>();
 
                     ApplicationDbSeedData.SeedDatabase(context);
+
+                    DashboardSeed.SeedUserStoreForDashboard(scope);
                 }
                 catch (Exception e)
                 {
