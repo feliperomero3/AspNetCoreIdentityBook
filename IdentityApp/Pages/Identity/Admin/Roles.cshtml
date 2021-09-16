@@ -1,0 +1,125 @@
+﻿@page "{id?}"
+@model RolesModel
+@{
+    ViewBag.Workflow = "Roles";
+}
+
+<div asp-validation-summary="All" class="text-danger m-2"></div>
+
+<table class="table table-sm table-striped table-bordered">
+    <thead>
+        <tr><th colspan="2" class="text-center">Master Role List</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model.Roles)
+        {
+            var userCount = await Model.GetUsersInRoleCountAsync(role.Name);
+            <tr>
+                <td>@role.Name</td>
+                <td>
+                    @if (userCount == 0)
+                    {
+                        <form method="post" asp-page-handler="deleteFromList">
+                            <div class="form-group">
+                                <input type="hidden" name="role" value="@role.Name" />
+                                <button class="btn btn-sm btn-danger" type="submit">
+                                    Delete
+                                </button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        @: @userCount users in role.
+                    }
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>
+                <form id="addToListForm" method="post" asp-page-handler="addToList">
+                    <input class="form-control" name="role" />
+                </form>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-success" type="submit" form="addToListForm">
+                    Add
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-sm table-striped table-bordered">
+    <thead><tr><th colspan="2" class="text-center">User's Roles</th></tr></thead>
+    <tbody>
+        @if (Model.Roles.Count() == 0)
+        {
+            <tr>
+                <td colspan="2" class="text-center py-2">
+                    No roles have been defined
+                </td>
+            </tr>
+        }
+        else
+        {
+            @if (Model.CurrentRoles.Count() == 0)
+            {
+                <tr>
+                    <td colspan="2" class="text-center py-2">
+                        User has no roles.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var role in Model.CurrentRoles)
+                {
+                    <tr>
+                        <td>@role</td>
+                        <td>
+                            <form method="post" asp-page-handler="delete">
+                                <input type="hidden" asp-for="Id" />
+                                <input type="hidden" name="role" value="@role" />
+                                <button class="btn btn-sm btn-danger" type="submit">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            @if (Model.AvailableRoles.Count == 0)
+            {
+                <tr>
+                    <td colspan="2" class="text-center py-2">
+                        User is in all roles.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>
+                        <select class="form-control" name="role" form="addForm">
+                            <option selected disabled>Choose Role</option>
+                            @foreach (var role in Model.AvailableRoles)
+                            {
+                                <option>@role</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <form id="addForm" method="post" asp-page-handler="add">
+                            <div class="form-group">
+                                <input type="hidden" asp-for="Id" />
+                                <button class="btn btn-sm btn-success" type="submit">
+                                    Add
+                                </button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
