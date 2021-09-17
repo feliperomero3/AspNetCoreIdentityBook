@@ -1,19 +1,24 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityApp.Pages.Identity.Admin
 {
     public class DeleteModel : AdminPageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public DeleteModel(UserManager<IdentityUser> userManager)
+        public DeleteModel(UserManager<IdentityUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
+            _configuration = configuration;
         }
 
         public IdentityUser IdentityUser { get; set; }
+
+        public string DashboardUser => _configuration["Dashboard:User"] ?? "admin@example.com";
 
         [BindProperty(SupportsGet = true)]
         public string Id { get; set; }

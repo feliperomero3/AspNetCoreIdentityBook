@@ -11,7 +11,10 @@
     <h5 class="text-center m-2">Delete @Model.IdentityUser.Email?</h5>
     <input type="hidden" name="id" value="@Model.IdentityUser.Id" />
     <div class="text-center p-2">
-        <button type="submit" class="btn btn-danger">Delete</button>
+        <button type="submit" class="btn btn-danger"
+                disabled="@(Model.IdentityUser.Email.Equals(Model.DashboardUser, StringComparison.OrdinalIgnoreCase))">
+            Delete
+        </button>
         <a asp-page="Dashboard" class="btn btn-secondary">Cancel</a>
     </div>
 </form>
