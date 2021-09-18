@@ -18,5 +18,10 @@ jobs:
         dotnet-version: 5.0.x
     - name: Restore dependencies
       run: dotnet restore
+    - name: Restore client-side libraries
+      run: |
+        dotnet tool install -g microsoft.web.librarymanager.cli
+        libman restore
+      working-directory: IdentityApp    
     - name: Build
-      run: dotnet build --configuration release --no-restore
+      run: dotnet build --no-restore --configuration release
