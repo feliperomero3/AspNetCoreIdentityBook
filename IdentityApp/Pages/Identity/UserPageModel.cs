@@ -6,6 +6,6 @@ namespace IdentityApp.Pages.Identity
     [Authorize]
     public class UserPageModel : PageModel
     {
-        // no methods or properties required
+        // No methods or properties required
     }
 }
