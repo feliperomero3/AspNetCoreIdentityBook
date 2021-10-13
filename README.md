@@ -16,9 +16,9 @@ This application showcases features that can be accessed by anyone, features tha
 1. Clone the project.
 1. Open the solution file `IdentityApp.sln` with Visual Studio 2019.
 1. Right click the `IdentityApp` solution node in the Solution Explorer tool window and click 'Restore Client-Side Libraries' option.
-1. (Optional) Open a terminal and start `smtp4dev` and leave it open.
+1. (Optional) Open a terminal and enter `smtp4dev` to start smtp4dev local SMTP and leave the terminal open.
 1. Press F5 to start the application.
-1. Open your browser and go to <https://localhost:44350>
+1. Open your browser and go to <https://localhost:44350> (the browser will not launch automatically).
 
 ## License
 
