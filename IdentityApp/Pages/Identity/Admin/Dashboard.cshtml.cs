@@ -64,6 +64,8 @@ namespace IdentityApp.Pages.Identity.Admin
                 result.ProcessOperationResult(ModelState);
             }
 
+            UsersCount = _userManager.Users.Count();
+
             return Page();
         }
     }
