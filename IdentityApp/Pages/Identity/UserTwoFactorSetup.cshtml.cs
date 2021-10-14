@@ -78,7 +78,7 @@ namespace IdentityApp.Pages.Identity
                 await _signInManager.RefreshSignInAsync(IdentityUser);
             }
 
-            QrCodeUrl = $"otpauth://totp/ExampleApp:{IdentityUser.Email}?secret={AuthenticatorKey}";
+            QrCodeUrl = $"otpauth://totp/IdentityApp:{IdentityUser.Email}?secret={AuthenticatorKey}";
         }
     }
 }
