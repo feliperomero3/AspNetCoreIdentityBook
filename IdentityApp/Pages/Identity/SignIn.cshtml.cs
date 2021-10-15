@@ -38,7 +38,7 @@ namespace IdentityApp.Pages.Identity
 
                 if (result.Succeeded)
                 {
-                    return Redirect(ReturnUrl ?? "/");
+                    return LocalRedirect(ReturnUrl ?? "/");
                 }
                 else if (result.IsLockedOut)
                 {
