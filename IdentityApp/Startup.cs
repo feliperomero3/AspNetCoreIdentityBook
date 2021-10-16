@@ -62,6 +62,7 @@ namespace IdentityApp
                 {
                     options.ConsumerKey = Configuration["Twitter:ApiKey"];
                     options.ConsumerSecret = Configuration["Twitter:ApiSecret"];
+                    options.RetrieveUserDetails = true;
                 });
 
             services.ConfigureApplicationCookie(options =>
