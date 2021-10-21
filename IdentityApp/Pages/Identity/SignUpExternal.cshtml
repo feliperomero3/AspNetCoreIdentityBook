@@ -1,0 +1,24 @@
+﻿@page "{id?}"
+@model IdentityApp.Pages.Identity.SignUpExternalModel
+@{
+    ViewData["showNav"] = false;
+    ViewData["banner"] = "Sign Up";
+}
+
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["errorMessage"]</div>
+    <a class="btn btn-danger" asp-page="SignUp">Cancel Sign Up</a>
+}
+else
+{
+    <div class="text-center">
+        <h6>
+            An account for <code>@Model.IdentityUser.Email</code> has been created.
+        </h6>
+        <h6>
+            Click the OK button and sign in using the @(await Model.GetExternalProvider()) button.
+        </h6>
+        <a class="btn btn-primary" asp-page="SignIn">OK</a>
+    </div>
+}
