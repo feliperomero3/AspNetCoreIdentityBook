@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -59,7 +60,7 @@ namespace IdentityApp.Pages.Identity
                         return RedirectToPage("SignInCodesWarning");
                     }
 
-                    return LocalRedirect(ReturnUrl ?? "/");
+                    return LocalRedirect(WebUtility.UrlDecode(ReturnUrl) ?? "/");
                 }
             }
 

@@ -17,20 +17,45 @@ else
 {
     <div asp-validation-summary="All" class="text-danger m-2"></div>
 
-    <form method="post">
-        <input type="hidden" asp-for="Token" />
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input class="form-control" type="email" asp-for="Email" readonly />
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-mb-3">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input class="form-control" type="email" asp-for="Email" readonly />
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input class="form-control" type="password" name="password" />
+        <div class="row">
+            <div class="col-6">
+                <h6>Sign In with a Password</h6>
+                <form method="post">
+                    <input type="hidden" asp-for="Token" />
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input class="form-control" type="password" name="password" />
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmpassword">Confirm Password</label>
+                        <input class="form-control" type="password" name="confirmpassword" />
+                    </div>
+                    <button class="btn btn-primary" type="submit">Finish and Sign In</button>
+                </form>
+            </div>
+            <div class="col-auto">
+                <h6>Or Sign In with a Social Media Account</h6>
+                <form method="post" asp-page="UserAccountCompleteExternal">
+                    <input type="hidden" asp-for="Email" />
+                    <input type="hidden" asp-for="Token" />
+                    @foreach (var scheme in Model.ExternalLogins)
+                    {
+                        <partial name="_ExternalButtonPartial" model="scheme" />
+                    }
+                </form>
+            </div>
+
         </div>
-        <div class="form-group">
-            <label for="confirmpassword">Confirm Password</label>
-            <input class="form-control" type="password" name="confirmpassword" />
-        </div>
-        <button class="btn btn-primary" type="submit">Finish and Sign In</button>
-    </form>
+
+    </div>
+
 }

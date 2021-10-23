@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using IdentityApp.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,17 +14,21 @@ namespace IdentityApp.Pages.Identity
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly TokenUrlEncoderService _tokenUrlEncoder;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public UserAccountCompleteModel(UserManager<IdentityUser> userManager, TokenUrlEncoderService tokenUrlEncoder)
+        public UserAccountCompleteModel(UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
+            TokenUrlEncoderService tokenUrlEncoder)
         {
             _userManager = userManager;
             _tokenUrlEncoder = tokenUrlEncoder;
+            _signInManager = signInManager;
         }
 
-        [BindProperty(SupportsGet = true)]
+        [BindProperty]
         public string Email { get; set; }
 
-        [BindProperty(SupportsGet = true)]
+        [BindProperty]
         public string Token { get; set; }
 
         [BindProperty]
@@ -33,8 +40,13 @@ namespace IdentityApp.Pages.Identity
         [Compare(nameof(Password))]
         public string ConfirmPassword { get; set; }
 
-        public void OnGet()
+        public IList<AuthenticationScheme> ExternalLogins { get; set; }
+
+        public async Task OnGetAsync(string email = null, string token = null)
         {
+            Email = email;
+            Token = token;
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
         public async Task<ActionResult> OnPostAsync()
@@ -53,6 +65,7 @@ namespace IdentityApp.Pages.Identity
 
                 result.ProcessOperationResult(ModelState);
             }
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             return Page();
         }
