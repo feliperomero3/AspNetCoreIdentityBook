@@ -44,6 +44,8 @@ namespace IdentityApp
             services.AddScoped<IdentityEmailService>();
 
             services.AddRazorPages();
+            services.AddControllers();
+
             services.AddScoped<SmtpClient>();
             services.AddScoped<IEmailSender, EmailSender>();
 
@@ -95,7 +97,11 @@ namespace IdentityApp
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => endpoints.MapRazorPages());
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapControllers();
+            });
         }
     }
 }
