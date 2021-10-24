@@ -75,6 +75,17 @@ namespace IdentityApp
                 options.Events.DisableRedirectionForApiClients();
             });
 
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:5100")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+
             services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
         }
 
@@ -95,6 +106,7 @@ namespace IdentityApp
 
             app.UseRouting();
 
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
 
