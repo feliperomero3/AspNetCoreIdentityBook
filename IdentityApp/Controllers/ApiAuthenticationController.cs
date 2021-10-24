@@ -1,7 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityApp.Controllers
 {
@@ -10,10 +16,16 @@ namespace IdentityApp.Controllers
     public class ApiAuthenticationController : ControllerBase
     {
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public ApiAuthenticationController(SignInManager<IdentityUser> signInManager)
+        public ApiAuthenticationController(SignInManager<IdentityUser> signInManager,
+            UserManager<IdentityUser> userManager,
+            IConfiguration Configuration)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
+            _configuration = Configuration;
         }
 
         public class SignInCredentials
@@ -28,18 +40,24 @@ namespace IdentityApp.Controllers
         [HttpPost("signin")]
         public async Task<object> ApiSignIn([FromBody] SignInCredentials credentials)
         {
-            var result = await _signInManager.PasswordSignInAsync(credentials.Email, credentials.Password,
-                isPersistent: true, lockoutOnFailure: true);
+            var user = await _userManager.FindByEmailAsync(credentials.Email);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, credentials.Password, true);
 
-            return new { success = result.Succeeded };
-        }
+            if (result.Succeeded)
+            {
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = (await _signInManager.CreateUserPrincipalAsync(user)).Identities.First(),
+                    Expires = DateTime.Now.AddMinutes(int.Parse(_configuration["BearerTokens:ExpiryMins"])),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                        _configuration["BearerTokens:Key"])), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var handler = new JwtSecurityTokenHandler();
+                var securityToken = new JwtSecurityTokenHandler().CreateToken(tokenDescriptor);
 
-        [HttpPost("signout")]
-        public async Task<ActionResult> ApiSignOut()
-        {
-            await _signInManager.SignOutAsync();
-
-            return Ok();
+                return new { success = true, token = handler.WriteToken(securityToken) };
+            }
+            return new { success = false };
         }
     }
 }
