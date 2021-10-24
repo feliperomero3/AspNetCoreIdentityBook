@@ -72,6 +72,7 @@ namespace IdentityApp
                 options.LoginPath = "/Identity/SignIn";
                 options.LogoutPath = "/Identity/SignOut";
                 options.AccessDeniedPath = "/Identity/Forbidden";
+                options.Events.DisableRedirectionForApiClients();
             });
 
             services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
