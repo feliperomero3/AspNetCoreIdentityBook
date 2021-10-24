@@ -5,6 +5,7 @@ using IdentityApp.Data;
 using IdentityApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -73,6 +74,7 @@ namespace IdentityApp
                 options.LogoutPath = "/Identity/SignOut";
                 options.AccessDeniedPath = "/Identity/Forbidden";
                 options.Events.DisableRedirectionForApiClients();
+                options.Cookie.SameSite = SameSiteMode.None;
             });
 
             services.AddCors(options =>

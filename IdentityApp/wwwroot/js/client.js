@@ -29,6 +29,7 @@ function createStructure() {
 
 function createContent() {
   const targetElement = createStructure();
+  createAuthPrompt(targetElement);
   const table = targetElement.make("table");
   table.classList.add("table", "table-sm", "table-striped", "table-bordered");
   const headerRow = table.make("thead", "tr");
@@ -56,6 +57,39 @@ function createContent() {
     const product = {};
     columns.forEach(col => product[col] = document.getElementById(col)?.value);
     await network.createProduct(product, populateTable, showError);
+  });
+}
+
+function createAuthPrompt(targetElement) {
+  let signedIn = false;
+  const container = targetElement.make("div");
+  container.classList.add("m-2", "p-2", "text-center");
+  const status = container.make("span");
+  status.innerText = "Not signed in";
+  const button = container.make("button");
+  button.classList.add("btn", "btn-sm", "btn-secondary", "m-2");
+  button.innerText = "Sign In";
+  button.addEventListener("click", async () => {
+    if (!signedIn) {
+      await network.signIn("alice@example.com", "mysecret",
+        response => {
+          if (response.success == true) {
+            signedIn = true;
+            status.innerText = "Signed In";
+            button.innerText = "Sign Out";
+            populateTable();
+          }
+        }, showError);
+    } else {
+      await network.signOut(() => {
+        signedIn = false;
+        status.innerText = "Signed out";
+        button.innerText = "Sign In";
+        createTableContents([]);
+        populateTable();
+      });
+    }
+
   });
 }
 
