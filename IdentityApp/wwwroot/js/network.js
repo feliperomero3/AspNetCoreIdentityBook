@@ -31,7 +31,7 @@ export const signIn = async function (email, password, callback, errorHandler) {
 
 export const signOut = async function (callback) {
   baseRequestConfig.headers = {};
-  processResponse(response, callback, callback);
+  processResponse({ ok: true }, callback, callback);
 }
 
 export const loadData = async function (callback, errorHandler) {
