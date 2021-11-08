@@ -1,4 +1,4 @@
-# IdentityApp
+# ASP.NET Core Identity Book
 
 [![.NET][ci-badge]][ci-status]
 
