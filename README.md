@@ -26,5 +26,5 @@ This application showcases features that can be accessed by anyone, features tha
 
 Copyright (c) 2021 Felipe Romero
 
-[ci-status]: https://github.com/feliperomero3/IdentityApp/actions/workflows/dotnet.yml
-[ci-badge]: https://github.com/feliperomero3/IdentityApp/actions/workflows/dotnet.yml/badge.svg
+[ci-status]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/dotnet.yml
+[ci-badge]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/dotnet.yml/badge.svg
