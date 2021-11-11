@@ -1,3 +1,4 @@
+using ExampleApp.Custom;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +14,11 @@ namespace ExampleApp
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<CustomAuthentication>();
+
             app.UseRouting();
+
+            app.UseMiddleware<ClaimsReporter>();
 
             app.UseEndpoints(endpoints =>
             {
