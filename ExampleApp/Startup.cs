@@ -22,6 +22,8 @@ namespace ExampleApp
 
             app.UseMiddleware<ClaimsReporter>();
 
+            app.UseMiddleware<CustomAuthorization>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context =>
