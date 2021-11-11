@@ -16,6 +16,8 @@ namespace ExampleApp
         {
             app.UseMiddleware<CustomAuthentication>();
 
+            app.UseMiddleware<RoleMemberships>();
+
             app.UseRouting();
 
             app.UseMiddleware<ClaimsReporter>();

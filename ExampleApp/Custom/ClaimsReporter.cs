@@ -34,6 +34,6 @@ namespace ExampleApp.Custom
             await _next(context);
         }
 
-        private string GetName(string claimType) => Path.GetFileName(new Uri(claimType).LocalPath);
+        private static string GetName(string claimType) => Path.GetFileName(new Uri(claimType).LocalPath);
     }
 }
