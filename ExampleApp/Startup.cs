@@ -32,6 +32,8 @@ namespace ExampleApp
                 });
 
                 endpoints.MapGet("/secret", SecretEndpoint.Endpoint).WithDisplayName("secret");
+                endpoints.Map("/signin", CustomSignInAndSignOut.SignIn);
+                endpoints.Map("/signout", CustomSignInAndSignOut.SignOut);
             });
         }
     }
