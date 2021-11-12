@@ -24,4 +24,6 @@ jobs:
         libman restore
       working-directory: IdentityApp
     - name: Build
-      run: dotnet build --no-restore --configuration release
+      run: |
+        dotnet build IdentityApp --no-restore --configuration release
+        dotnet build ExampleApp --no-restore --configuration release
