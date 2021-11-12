@@ -25,5 +25,5 @@ jobs:
       working-directory: IdentityApp
     - name: Build
       run: |
-        dotnet build IdentityApp --no-restore --configuration release
-        dotnet build ExampleApp --no-restore --configuration release
+        dotnet build IdentityApp\IdentityApp.sln --no-restore --configuration release
+        dotnet build ExampleApp\ExampleApp.sln --no-restore --configuration release
