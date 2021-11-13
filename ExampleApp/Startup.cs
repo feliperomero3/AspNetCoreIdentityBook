@@ -8,13 +8,21 @@ namespace ExampleApp
 {
     public class Startup
     {
+
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(options =>
+            {
+                options.AddScheme<AuthHandler>(ExampleAppConstants.Scheme, ExampleAppConstants.AuthenticationType);
+                options.DefaultScheme = ExampleAppConstants.Scheme;
+            });
+
+            services.AddAuthorization();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<CustomAuthentication>();
+            app.UseAuthentication();
 
             app.UseMiddleware<RoleMemberships>();
 
@@ -22,7 +30,7 @@ namespace ExampleApp
 
             app.UseMiddleware<ClaimsReporter>();
 
-            app.UseMiddleware<CustomAuthorization>();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
