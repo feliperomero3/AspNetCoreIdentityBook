@@ -17,7 +17,9 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run:  |
+        dotnet restore IdentityApp\IdentityApp.sln
+        dotnet restore ExampleApp\ExampleApp.sln
     - name: Restore client-side libraries
       run: |
         dotnet tool install -g microsoft.web.librarymanager.cli
