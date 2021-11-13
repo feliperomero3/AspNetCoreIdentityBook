@@ -23,7 +23,9 @@ jobs:
         dotnet tool install -g microsoft.web.librarymanager.cli
         libman restore
       working-directory: IdentityApp
-    - name: Build
-      run: |
-        dotnet build IdentityApp\IdentityApp.sln --no-restore --configuration release
-        dotnet build ExampleApp\ExampleApp.sln --no-restore --configuration release
+    - name: Build IdentityApp
+      run: dotnet build --no-restore --configuration release IdentityApp.sln
+      working-directory: IdentityApp
+    - name: Build ExampleApp
+      run: dotnet build --no-restore --configuration release ExampleApp.sln
+      working-directory: ExampleApp
