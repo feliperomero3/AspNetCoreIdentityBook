@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 
 namespace ExampleApp.Custom
@@ -13,18 +15,25 @@ namespace ExampleApp.Custom
 
             if (user != null)
             {
-                context.Response.Cookies.Append(cookieKey, user, new CookieOptions { Secure = true, HttpOnly = true });
+                var claim = new Claim(ClaimTypes.Name, user);
+                var identity = new ClaimsIdentity(ExampleAppConstants.Scheme);
+
+                identity.AddClaim(claim);
+
+                await context.SignInAsync(new ClaimsPrincipal(identity));
+
                 await context.Response.WriteAsync($"Authenticated user: {user}");
             }
             else
             {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.ChallengeAsync();
             }
         }
 
         public static async Task SignOut(HttpContext context)
         {
-            context.Response.Cookies.Delete(cookieKey);
+            await context.SignOutAsync();
+
             await context.Response.WriteAsync("Signed out");
         }
     }

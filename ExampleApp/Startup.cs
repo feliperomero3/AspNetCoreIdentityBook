@@ -13,7 +13,7 @@ namespace ExampleApp
         {
             services.AddAuthentication(options =>
             {
-                options.AddScheme<AuthHandler>(ExampleAppConstants.Scheme, ExampleAppConstants.AuthenticationType);
+                options.AddScheme<AuthenticationHandler>(ExampleAppConstants.Scheme, ExampleAppConstants.AuthenticationType);
                 options.DefaultScheme = ExampleAppConstants.Scheme;
             });
 

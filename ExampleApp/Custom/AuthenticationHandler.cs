@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ExampleApp.Custom
 {
-    public class AuthHandler : IAuthenticationHandler
+    public class AuthenticationHandler : IAuthenticationSignInHandler
     {
         private HttpContext _context;
         private AuthenticationScheme _scheme;
@@ -50,6 +50,20 @@ namespace ExampleApp.Custom
         {
             _scheme = scheme;
             _context = context;
+
+            return Task.CompletedTask;
+        }
+
+        public Task SignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)
+        {
+            _context.Response.Cookies.Append(cookieKey, user.Identity.Name, new CookieOptions { Secure = true, HttpOnly = true });
+
+            return Task.CompletedTask;
+        }
+
+        public Task SignOutAsync(AuthenticationProperties properties)
+        {
+            _context.Response.Cookies.Delete(cookieKey);
 
             return Task.CompletedTask;
         }
