@@ -1,4 +1,5 @@
 using ExampleApp.Custom;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,11 +11,12 @@ namespace ExampleApp
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(options =>
-            {
-                options.AddScheme<AuthenticationHandler>(ExampleAppConstants.Scheme, ExampleAppConstants.AuthenticationType);
-                options.DefaultScheme = ExampleAppConstants.Scheme;
-            });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/signin";
+                    options.AccessDeniedPath = $"/signin/{StatusCodes.Status403Forbidden}";
+                });
 
             services.AddAuthorization(options =>
             {

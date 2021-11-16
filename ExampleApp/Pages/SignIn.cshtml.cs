@@ -17,14 +17,19 @@ namespace ExampleApp.Pages
 
         public int? Code { get; set; }
 
-        public void OnGet(int? code)
+        public string ReturnUrl { get; set; }
+
+        public void OnGet(int? code, string returnUrl = null)
         {
             Code = code;
+            ReturnUrl = returnUrl ?? Url.Content("~/");
             Username = User.Identity.Name ?? "(No Signed In User)";
         }
 
-        public async Task<ActionResult> OnPost([Required] string username)
+        public async Task<ActionResult> OnPost([Required] string username, string returnUrl = null)
         {
+            returnUrl ??= Url.Content("~/");
+
             var claim = new Claim(ClaimTypes.Name, username);
             var identity = new ClaimsIdentity(ExampleAppConstants.Scheme);
 
@@ -32,7 +37,7 @@ namespace ExampleApp.Pages
 
             await HttpContext.SignInAsync(new ClaimsPrincipal(identity));
 
-            return Redirect("/signin");
+            return LocalRedirect(returnUrl);
         }
     }
 }
