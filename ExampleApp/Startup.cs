@@ -20,10 +20,14 @@ namespace ExampleApp
             {
                 options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Administrator"));
             });
+
+            services.AddRazorPages();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseStaticFiles();
+
             app.UseAuthentication();
 
             app.UseMiddleware<RoleMemberships>();
@@ -43,8 +47,7 @@ namespace ExampleApp
 
                 endpoints.MapGet("/secret", SecretEndpoint.Endpoint).WithDisplayName("secret")
                     .RequireAuthorization("RequireAdministratorRole");
-                endpoints.Map("/signin", CustomSignInAndSignOut.SignIn);
-                endpoints.Map("/signout", CustomSignInAndSignOut.SignOut);
+                endpoints.MapRazorPages();
             });
         }
     }

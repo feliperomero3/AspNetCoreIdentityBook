@@ -34,14 +34,14 @@ namespace ExampleApp.Custom
 
         public Task ChallengeAsync(AuthenticationProperties properties)
         {
-            _context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            _context.Response.Redirect($"/signin/{StatusCodes.Status401Unauthorized}");
 
             return Task.CompletedTask;
         }
 
         public Task ForbidAsync(AuthenticationProperties properties)
         {
-            _context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            _context.Response.Redirect($"/signin/{StatusCodes.Status403Forbidden}");
 
             return Task.CompletedTask;
         }
