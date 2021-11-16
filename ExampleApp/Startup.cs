@@ -8,7 +8,6 @@ namespace ExampleApp
 {
     public class Startup
     {
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(options =>
@@ -17,7 +16,10 @@ namespace ExampleApp
                 options.DefaultScheme = ExampleAppConstants.Scheme;
             });
 
-            services.AddAuthorization();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Administrator"));
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -39,7 +41,8 @@ namespace ExampleApp
                     await context.Response.WriteAsync("Hello World!");
                 });
 
-                endpoints.MapGet("/secret", SecretEndpoint.Endpoint).WithDisplayName("secret");
+                endpoints.MapGet("/secret", SecretEndpoint.Endpoint).WithDisplayName("secret")
+                    .RequireAuthorization("RequireAdministratorRole");
                 endpoints.Map("/signin", CustomSignInAndSignOut.SignIn);
                 endpoints.Map("/signout", CustomSignInAndSignOut.SignOut);
             });
