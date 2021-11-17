@@ -18,10 +18,7 @@ namespace ExampleApp
                     options.AccessDeniedPath = $"/signin/{StatusCodes.Status403Forbidden}";
                 });
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Administrator"));
-            });
+            services.AddAuthorization();
 
             services.AddRazorPages();
         }
@@ -32,13 +29,9 @@ namespace ExampleApp
 
             app.UseAuthentication();
 
-            app.UseMiddleware<RoleMemberships>();
-
             app.UseRouting();
 
-            app.UseMiddleware<ClaimsReporter>();
-
-            app.UseAuthorization();
+            app.UseMiddleware<AuthorizationReporter>();
 
             app.UseEndpoints(endpoints =>
             {
@@ -47,8 +40,6 @@ namespace ExampleApp
                     await context.Response.WriteAsync("Hello World!");
                 });
 
-                endpoints.MapGet("/secret", SecretEndpoint.Endpoint).WithDisplayName("secret")
-                    .RequireAuthorization("RequireAdministratorRole");
                 endpoints.MapRazorPages();
             });
         }
