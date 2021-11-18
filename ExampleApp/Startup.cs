@@ -1,5 +1,6 @@
 using ExampleApp.Custom;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,12 @@ namespace ExampleApp
                     options.AccessDeniedPath = $"/signin/{StatusCodes.Status403Forbidden}";
                 });
 
-            services.AddAuthorization();
+            services.AddTransient<IAuthorizationHandler, CustomRequirementsHandler>();
+
+            services.AddAuthorization(options =>
+            {
+                AuthorizationPolicies.AddPolicies(options);
+            });
 
             services.AddRazorPages();
         }
