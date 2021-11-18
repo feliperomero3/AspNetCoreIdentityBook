@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace ExampleApp.Custom
 {
@@ -7,7 +8,7 @@ namespace ExampleApp.Custom
     {
         public static void AddPolicies(AuthorizationOptions options)
         {
-            var requirements = new[] { new CustomRequirement() { Name = "Bob" } };
+            var requirements = new[] { new NameAuthorizationRequirement("Bob") };
             var schemes = Enumerable.Empty<string>();
 
             options.FallbackPolicy = new AuthorizationPolicy(requirements, schemes);
