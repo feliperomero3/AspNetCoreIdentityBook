@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace ExampleApp.Custom
@@ -12,7 +11,7 @@ namespace ExampleApp.Custom
                 new RolesAuthorizationRequirement(new[] { "User", "Administrator" }),
                 new AssertionRequirement(context => !string.Equals(context.User.Identity.Name, "Bob"))
             };
-            var schemes = Enumerable.Empty<string>();
+            var schemes = new[] { UsersAndClaims.Schemes[0] };
 
             options.FallbackPolicy = new AuthorizationPolicy(requirements, schemes);
         }
