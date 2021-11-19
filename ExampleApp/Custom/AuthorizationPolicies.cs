@@ -8,7 +8,10 @@ namespace ExampleApp.Custom
     {
         public static void AddPolicies(AuthorizationOptions options)
         {
-            var requirements = new[] { new NameAuthorizationRequirement("Bob") };
+            var requirements = new IAuthorizationRequirement[] {
+                new RolesAuthorizationRequirement(new[] { "User", "Administrator" }),
+                new AssertionRequirement(context => !string.Equals(context.User.Identity.Name, "Bob"))
+            };
             var schemes = Enumerable.Empty<string>();
 
             options.FallbackPolicy = new AuthorizationPolicy(requirements, schemes);
