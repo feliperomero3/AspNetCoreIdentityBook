@@ -38,12 +38,15 @@ namespace ExampleApp.Custom
         private static void AddNamedPolicy(AuthorizationOptions options)
         {
             var requirements = new IAuthorizationRequirement[] {
-                new RolesAuthorizationRequirement(new[] { "User" }),
                 new AssertionRequirement(context => !string.Equals(context.User.Identity.Name, "Bob"))
             };
-            var schemes = Enumerable.Empty<string>();
 
-            options.AddPolicy("UsersExceptBob", new AuthorizationPolicy(requirements, schemes));
+            options.AddPolicy("UsersExceptBob", builder =>
+            {
+                builder.RequireRole("User")
+                    .AddRequirements(requirements)
+                    .Build();
+            });
         }
     }
 }
