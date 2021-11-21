@@ -27,6 +27,7 @@ namespace ExampleApp
             });
 
             services.AddRazorPages();
+            services.AddControllersWithViews();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -47,6 +48,7 @@ namespace ExampleApp
                 });
 
                 endpoints.MapRazorPages();
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
