@@ -26,7 +26,11 @@ namespace ExampleApp
                 AuthorizationPolicies.AddPolicies(options);
             });
 
-            services.AddRazorPages();
+            services.AddRazorPages(options =>
+            {
+                options.Conventions.AuthorizePage("/Secret", "NotAdministrator");
+            });
+
             services.AddControllersWithViews();
         }
 

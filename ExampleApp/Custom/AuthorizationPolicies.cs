@@ -11,6 +11,7 @@ namespace ExampleApp.Custom
             AddFallbackPolicy(options);
             AddDefaultPolicy(options);
             AddNamedPolicy(options);
+            AddNotAdministratorPolicy(options);
         }
 
         private static void AddFallbackPolicy(AuthorizationOptions options)
@@ -46,6 +47,16 @@ namespace ExampleApp.Custom
                 builder.RequireRole("User")
                     .AddRequirements(requirements)
                     .Build();
+            });
+        }
+
+        private static void AddNotAdministratorPolicy(AuthorizationOptions options)
+        {
+            var requirements = new AssertionRequirement(context => !context.User.IsInRole("Administrator"));
+
+            options.AddPolicy("NotAdministrator", builder =>
+            {
+                builder.AddRequirements(requirements);
             });
         }
     }
