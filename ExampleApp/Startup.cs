@@ -31,7 +31,11 @@ namespace ExampleApp
                 options.Conventions.AuthorizePage("/Secret", "NotAdministrator");
             });
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(options =>
+            {
+                options.Conventions.Add(new AuthorizationPolicyConvention("Home", policy: "NotAdministrator"));
+                options.Conventions.Add(new AuthorizationPolicyConvention("Home", action: "Protected", policy: "UsersExceptBob"));
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
