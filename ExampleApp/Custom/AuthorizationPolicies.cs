@@ -9,7 +9,7 @@ namespace ExampleApp.Custom
         public static void AddPolicies(AuthorizationOptions options)
         {
             AddFallbackPolicy(options);
-            AddDefaultPolicy(options);
+            //AddDefaultPolicy(options);
             AddNamedPolicy(options);
             AddNotAdministratorPolicy(options);
         }
