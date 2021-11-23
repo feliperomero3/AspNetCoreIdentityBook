@@ -47,6 +47,7 @@ namespace ExampleApp
             {
                 endpoints.MapRazorPages();
                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapFallbackToPage("/Secret");
             });
         }
     }
