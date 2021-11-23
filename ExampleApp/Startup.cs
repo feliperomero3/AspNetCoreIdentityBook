@@ -26,16 +26,9 @@ namespace ExampleApp
                 AuthorizationPolicies.AddPolicies(options);
             });
 
-            services.AddRazorPages(options =>
-            {
-                options.Conventions.AuthorizePage("/Secret", "NotAdministrator");
-            });
+            services.AddRazorPages();
 
-            services.AddControllersWithViews(options =>
-            {
-                options.Conventions.Add(new AuthorizationPolicyConvention("Home", policy: "NotAdministrator"));
-                options.Conventions.Add(new AuthorizationPolicyConvention("Home", action: "Protected", policy: "UsersExceptBob"));
-            });
+            services.AddControllersWithViews();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -46,15 +39,12 @@ namespace ExampleApp
 
             app.UseRouting();
 
-            app.UseMiddleware<AuthorizationReporter>();
+            app.UseMiddleware<RoleMemberships>();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
-
                 endpoints.MapRazorPages();
                 endpoints.MapDefaultControllerRoute();
             });
