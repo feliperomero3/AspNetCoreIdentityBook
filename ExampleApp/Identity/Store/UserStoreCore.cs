@@ -10,6 +10,14 @@ namespace ExampleApp.Identity.Store
     public class UserStore : IUserStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> users = new ConcurrentDictionary<string, AppUser>();
+        private readonly ILookupNormalizer _normalizer;
+
+        public UserStore(ILookupNormalizer normalizer)
+        {
+            _normalizer = normalizer;
+            SeedStore();
+        }
+
         private bool _disposed;
 
         public Task<IdentityResult> CreateAsync(AppUser user, CancellationToken cancellationToken)
@@ -77,6 +85,21 @@ namespace ExampleApp.Identity.Store
         public Task SetUserNameAsync(AppUser user, string userName, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.UserName = userName);
+        }
+
+        private void SeedStore()
+        {
+            var idCounter = 0;
+            foreach (var name in UsersAndClaims.Users)
+            {
+                var user = new AppUser
+                {
+                    Id = (++idCounter).ToString(),
+                    UserName = name,
+                    NormalizedUserName = _normalizer.NormalizeName(name)
+                };
+                users.TryAdd(user.Id, user);
+            }
         }
 
         private static IdentityResult Error => IdentityResult.Failed(new IdentityError
