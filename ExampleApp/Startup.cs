@@ -1,9 +1,11 @@
 using ExampleApp.Custom;
+using ExampleApp.Identity;
+using ExampleApp.Identity.Store;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExampleApp
@@ -19,7 +21,9 @@ namespace ExampleApp
                     options.AccessDeniedPath = $"/signin/{StatusCodes.Status403Forbidden}";
                 });
 
-            services.AddTransient<IAuthorizationHandler, CustomRequirementsHandler>();
+            services.AddIdentityCore<AppUser>();
+            services.AddSingleton<ILookupNormalizer, Normalizer>();
+            services.AddSingleton<IUserStore<AppUser>, UserStore>();
 
             services.AddAuthorization(options =>
             {
