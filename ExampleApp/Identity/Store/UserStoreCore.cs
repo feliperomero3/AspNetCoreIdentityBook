@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -32,8 +33,7 @@ namespace ExampleApp.Identity.Store
 
         public Task<IdentityResult> DeleteAsync(AppUser user, CancellationToken cancellationToken)
         {
-            if (users.ContainsKey(user.Id)
-            && users.TryRemove(user.Id, out user))
+            if (users.ContainsKey(user.Id) && users.TryRemove(user.Id, out user))
             {
                 return Task.FromResult(IdentityResult.Success);
             }
@@ -42,12 +42,16 @@ namespace ExampleApp.Identity.Store
 
         public Task<AppUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var user = users.ContainsKey(userId) ? users[userId].Clone() : null;
+
+            return Task.FromResult(user);
         }
 
         public Task<AppUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var user = users.Values.FirstOrDefault(user => user.NormalizedUserName == normalizedUserName);
+
+            return Task.FromResult(user?.Clone());
         }
 
         public Task<string> GetNormalizedUserNameAsync(AppUser user, CancellationToken cancellationToken)
