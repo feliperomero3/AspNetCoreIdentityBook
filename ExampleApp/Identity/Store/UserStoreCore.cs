@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ExampleApp.Identity.Store
 {
-    public partial class UserStore : IUserStore<AppUser>
+    public class UserStore : IUserStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> users = new ConcurrentDictionary<string, AppUser>();
         private bool _disposed;
@@ -56,27 +56,27 @@ namespace ExampleApp.Identity.Store
 
         public Task<string> GetNormalizedUserNameAsync(AppUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.NormalizedUserName);
         }
 
         public Task<string> GetUserIdAsync(AppUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.Id);
         }
 
         public Task<string> GetUserNameAsync(AppUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.UserName);
         }
 
         public Task SetNormalizedUserNameAsync(AppUser user, string normalizedName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.NormalizedUserName = normalizedName);
         }
 
         public Task SetUserNameAsync(AppUser user, string userName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.UserName = userName);
         }
 
         private static IdentityResult Error => IdentityResult.Failed(new IdentityError
