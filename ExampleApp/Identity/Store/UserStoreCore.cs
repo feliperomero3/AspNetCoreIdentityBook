@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ExampleApp.Identity.Store
 {
-    public class UserStore : IUserStore<AppUser>
+    public class UserStore : IQueryableUserStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> users = new ConcurrentDictionary<string, AppUser>();
         private readonly ILookupNormalizer _normalizer;
@@ -107,6 +107,8 @@ namespace ExampleApp.Identity.Store
             Code = "StorageFailure",
             Description = "User Store Error"
         });
+
+        public IQueryable<AppUser> Users => users.Values.Select(user => user.Clone()).AsQueryable();
 
         /// <summary>
         /// Throws if this class has been disposed.

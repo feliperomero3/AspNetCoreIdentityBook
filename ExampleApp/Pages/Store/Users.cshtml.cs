@@ -24,6 +24,15 @@ namespace ExampleApp.Pages.Store
 
         public async Task OnGet()
         {
+            if (_userManager.SupportsQueryableUsers)
+            {
+                var normalizedName = _userManager.NormalizeName(SearchName ?? string.Empty);
+
+                Users = string.IsNullOrEmpty(SearchName)
+                    ? _userManager.Users.OrderBy(u => u.UserName)
+                    : _userManager.Users.Where(u => u.Id == SearchName || u.NormalizedUserName.Contains(normalizedName))
+                    .OrderBy(u => u.UserName);
+            }
             if (SearchName != null)
             {
                 var nameUser = await _userManager.FindByNameAsync(SearchName);
