@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ExampleApp.Identity.Store
 {
-    public class UserStore : IQueryableUserStore<AppUser>
+    public class UserStore : IQueryableUserStore<AppUser>, IUserEmailStore<AppUser>, IUserPhoneNumberStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> users = new ConcurrentDictionary<string, AppUser>();
         private readonly ILookupNormalizer _normalizer;
@@ -87,16 +87,91 @@ namespace ExampleApp.Identity.Store
             return Task.FromResult(user.UserName = userName);
         }
 
+        public IQueryable<AppUser> Users => users.Values.Select(user => user.Clone()).AsQueryable();
+
+        public Task SetEmailAsync(AppUser user, string email, CancellationToken cancellationToken)
+        {
+            user.EmailAddress = email;
+
+            return Task.CompletedTask;
+        }
+
+        public Task<string> GetEmailAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.EmailAddress);
+        }
+
+        public Task<bool> GetEmailConfirmedAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.IsEmailAddressConfirmed);
+        }
+
+        public Task SetEmailConfirmedAsync(AppUser user, bool confirmed, CancellationToken cancellationToken)
+        {
+            user.IsEmailAddressConfirmed = confirmed;
+
+            return Task.CompletedTask;
+        }
+
+        public Task<AppUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(Users.FirstOrDefault(user => user.NormalizedEmailAddress == normalizedEmail));
+        }
+
+        public Task<string> GetNormalizedEmailAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.NormalizedEmailAddress);
+        }
+
+        public Task SetNormalizedEmailAsync(AppUser user, string normalizedEmail, CancellationToken cancellationToken)
+        {
+            user.NormalizedEmailAddress = normalizedEmail;
+
+            return Task.CompletedTask;
+        }
+
+        public Task<string> GetPhoneNumberAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.PhoneNumber);
+        }
+
+        public Task<bool> GetPhoneNumberConfirmedAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.IsPhoneNumberConfirmed);
+        }
+
+        public Task SetPhoneNumberAsync(AppUser user, string phoneNumber, CancellationToken cancellationToken)
+        {
+            user.PhoneNumber = phoneNumber;
+
+            return Task.CompletedTask;
+        }
+
+        public Task SetPhoneNumberConfirmedAsync(AppUser user, bool confirmed, CancellationToken cancellationToken)
+        {
+            user.IsPhoneNumberConfirmed = confirmed;
+
+            return Task.CompletedTask;
+        }
+
         private void SeedStore()
         {
             var idCounter = 0;
+
+            static string EmailFromName(string name) => $"{name.ToLower()}@example.com";
+
             foreach (var name in UsersAndClaims.Users)
             {
                 var user = new AppUser
                 {
                     Id = (++idCounter).ToString(),
                     UserName = name,
-                    NormalizedUserName = _normalizer.NormalizeName(name)
+                    NormalizedUserName = _normalizer.NormalizeName(name),
+                    EmailAddress = EmailFromName(name),
+                    NormalizedEmailAddress = _normalizer.NormalizeEmail(EmailFromName(name)),
+                    IsEmailAddressConfirmed = true,
+                    PhoneNumber = "123-4567",
+                    IsPhoneNumberConfirmed = true
                 };
                 users.TryAdd(user.Id, user);
             }
@@ -107,8 +182,6 @@ namespace ExampleApp.Identity.Store
             Code = "StorageFailure",
             Description = "User Store Error"
         });
-
-        public IQueryable<AppUser> Users => users.Values.Select(user => user.Clone()).AsQueryable();
 
         /// <summary>
         /// Throws if this class has been disposed.
