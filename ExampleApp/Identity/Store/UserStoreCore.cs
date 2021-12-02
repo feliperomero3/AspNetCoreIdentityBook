@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -156,6 +157,13 @@ namespace ExampleApp.Identity.Store
 
         private void SeedStore()
         {
+            var customData = new Dictionary<string, (string food, string hobby)>
+            {
+                { "Alice", ("Pizza", "Running") },
+                { "Bob", ("Ice Cream", "Cinema") },
+                { "Charlie", ("Burgers", "Cooking") }
+            };
+
             var idCounter = 0;
 
             static string EmailFromName(string name) => $"{name.ToLower()}@example.com";
@@ -171,7 +179,9 @@ namespace ExampleApp.Identity.Store
                     NormalizedEmailAddress = _normalizer.NormalizeEmail(EmailFromName(name)),
                     IsEmailAddressConfirmed = true,
                     PhoneNumber = "123-4567",
-                    IsPhoneNumberConfirmed = true
+                    IsPhoneNumberConfirmed = true,
+                    FavoriteFood = customData[name].food,
+                    Hobby = customData[name].hobby
                 };
                 users.TryAdd(user.Id, user);
             }
