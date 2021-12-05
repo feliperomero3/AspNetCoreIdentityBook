@@ -24,11 +24,9 @@ namespace ExampleApp
             services.AddIdentityCore<AppUser>();
             services.AddSingleton<ILookupNormalizer, Normalizer>();
             services.AddSingleton<IUserStore<AppUser>, UserStore>();
+            services.AddSingleton<IUserValidator<AppUser>, EmailValidator>();
 
-            services.AddAuthorization(options =>
-            {
-                AuthorizationPolicies.AddPolicies(options);
-            });
+            services.AddAuthorization(options => AuthorizationPolicies.AddPolicies(options));
 
             services.AddRazorPages();
 

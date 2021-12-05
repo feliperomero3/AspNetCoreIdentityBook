@@ -43,7 +43,7 @@ namespace ExampleApp.Pages.Store
             }
             if (result.Succeeded)
             {
-                return RedirectToPage("./Users", new { searchname = user.Id });
+                return RedirectToPage("./Users");
             }
             else
             {

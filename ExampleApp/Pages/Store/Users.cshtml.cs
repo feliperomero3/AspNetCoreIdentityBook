@@ -30,8 +30,7 @@ namespace ExampleApp.Pages.Store
 
                 Users = string.IsNullOrEmpty(SearchName)
                     ? _userManager.Users.OrderBy(u => u.UserName)
-                    : _userManager.Users.Where(u => u.Id == SearchName || u.NormalizedUserName.Contains(normalizedName))
-                    .OrderBy(u => u.UserName);
+                    : _userManager.Users.Where(u => u.Id == SearchName || u.NormalizedUserName.Contains(normalizedName)).OrderBy(u => u.UserName);
             }
             if (SearchName != null)
             {

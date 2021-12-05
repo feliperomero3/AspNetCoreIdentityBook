@@ -10,7 +10,7 @@ namespace ExampleApp.Identity.Store
             {
                 return null;
             }
-            return email.Normalize().ToUpperInvariant();
+            return email.Normalize().ToLowerInvariant();
         }
 
         public string NormalizeName(string name)
@@ -19,7 +19,7 @@ namespace ExampleApp.Identity.Store
             {
                 return null;
             }
-            return name.Normalize().ToUpperInvariant();
+            return name.Normalize().ToLowerInvariant();
         }
     }
 }
