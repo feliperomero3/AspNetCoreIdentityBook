@@ -1,4 +1,9 @@
 ﻿@model string
-<a asp-page="edituser" asp-route-id="@Model" class="btn btn-sm btn-secondary">
-    Edit
-</a>
+@inject UserManager<AppUser> UserManager
+
+<a asp-page="edituser" asp-route-id="@Model" class="btn btn-sm btn-secondary">Edit</a>
+
+@if (UserManager.SupportsUserClaim)
+{
+    <a asp-page="claims" asp-route-id="@Model" class="btn btn-sm btn-info">Claims</a>
+}
