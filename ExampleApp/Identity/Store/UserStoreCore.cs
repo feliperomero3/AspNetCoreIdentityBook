@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 namespace ExampleApp.Identity.Store
 {
-    public class UserStore : IQueryableUserStore<AppUser>, IUserEmailStore<AppUser>, IUserPhoneNumberStore<AppUser>
+    public class UserStore : IQueryableUserStore<AppUser>, IUserEmailStore<AppUser>, IUserPhoneNumberStore<AppUser>, IUserClaimStore<AppUser>, IEqualityComparer<Claim>
     {
         private readonly ConcurrentDictionary<string, AppUser> users = new ConcurrentDictionary<string, AppUser>();
         private readonly ILookupNormalizer _normalizer;
@@ -20,6 +22,32 @@ namespace ExampleApp.Identity.Store
         }
 
         private bool _disposed;
+
+        private static IdentityResult Error => IdentityResult.Failed(new IdentityError
+        {
+            Code = "StorageFailure",
+            Description = "User Store Error"
+        });
+
+        /// <summary>
+        /// Throws if this class has been disposed.
+        /// </summary>
+        protected void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().Name);
+            }
+        }
+
+        /// <summary>
+        /// Dispose the store
+        /// </summary>
+        public void Dispose()
+        {
+            _disposed = true;
+            GC.SuppressFinalize(this);
+        }
 
         public Task<IdentityResult> CreateAsync(AppUser user, CancellationToken cancellationToken)
         {
@@ -183,34 +211,57 @@ namespace ExampleApp.Identity.Store
                     FavoriteFood = customData[name].food,
                     Hobby = customData[name].hobby
                 };
+                user.Claims = UsersAndClaims.UserData[user.UserName].Select(role => new Claim(ClaimTypes.Role, role)).ToList();
                 users.TryAdd(user.Id, user);
             }
         }
 
-        private static IdentityResult Error => IdentityResult.Failed(new IdentityError
+        public Task<IList<Claim>> GetClaimsAsync(AppUser user, CancellationToken cancellationToken)
         {
-            Code = "StorageFailure",
-            Description = "User Store Error"
-        });
-
-        /// <summary>
-        /// Throws if this class has been disposed.
-        /// </summary>
-        protected void ThrowIfDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().Name);
-            }
+            return Task.FromResult(user.Claims);
         }
 
-        /// <summary>
-        /// Dispose the store
-        /// </summary>
-        public void Dispose()
+        public Task AddClaimsAsync(AppUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
-            _disposed = true;
-            GC.SuppressFinalize(this);
+            if (user.Claims == null)
+            {
+                user.Claims = new List<Claim>();
+            }
+            foreach (var claim in claims)
+            {
+                user.Claims.Add(claim);
+            }
+            return Task.CompletedTask;
+        }
+
+        public async Task ReplaceClaimAsync(AppUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        {
+            await RemoveClaimsAsync(user, new[] { claim }, cancellationToken);
+            user.Claims.Add(newClaim);
+        }
+
+        public Task RemoveClaimsAsync(AppUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            foreach (var claim in user.Claims.Intersect(claims, this).ToList())
+            {
+                user.Claims.Remove(claim);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task<IList<AppUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(Users.Where(u => u.Claims.Any(c => Equals(c, claim))).ToList() as IList<AppUser>);
+        }
+
+        public bool Equals(Claim x, Claim y)
+        {
+            return x.Type == y.Type && string.Equals(x.Value, y.Value, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public int GetHashCode([DisallowNull] Claim claim)
+        {
+            return claim.Type.GetHashCode() + claim.Value.GetHashCode();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace ExampleApp
     {
         public static readonly string[] Schemes = new string[] { "TestScheme", "OtherScheme" };
 
-        private static readonly Dictionary<string, IEnumerable<string>> UserData =
+        public static readonly Dictionary<string, IEnumerable<string>> UserData =
             new()
             {
                 { "Alice", new[] { "User", "Administrator" } },

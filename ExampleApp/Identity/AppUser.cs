@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace ExampleApp.Identity
 {
@@ -23,5 +25,7 @@ namespace ExampleApp.Identity
         public string FavoriteFood { get; set; }
 
         public string Hobby { get; set; }
+
+        public IList<Claim> Claims { get; set; }
     }
 }
