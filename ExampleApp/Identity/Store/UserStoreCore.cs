@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Claims;
@@ -10,7 +11,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ExampleApp.Identity.Store
 {
-    public class UserStore : IQueryableUserStore<AppUser>, IUserEmailStore<AppUser>, IUserPhoneNumberStore<AppUser>, IUserClaimStore<AppUser>, IEqualityComparer<Claim>
+    public class UserStore :
+        IQueryableUserStore<AppUser>,
+        IUserEmailStore<AppUser>,
+        IUserPhoneNumberStore<AppUser>,
+        IUserClaimStore<AppUser>,
+        IEqualityComparer<Claim>,
+        IUserRoleStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> users = new ConcurrentDictionary<string, AppUser>();
         private readonly ILookupNormalizer _normalizer;
@@ -262,6 +269,42 @@ namespace ExampleApp.Identity.Store
         public int GetHashCode([DisallowNull] Claim claim)
         {
             return claim.Type.GetHashCode() + claim.Value.GetHashCode();
+        }
+
+        public Task AddToRoleAsync(AppUser user, string roleName, CancellationToken cancellationToken)
+        {
+            return AddClaimsAsync(user, GetClaim(roleName), cancellationToken);
+        }
+
+        private static IEnumerable<Claim> GetClaim(string roleName)
+        {
+            return new[] { new Claim(ClaimTypes.Role, roleName) };
+        }
+
+        public async Task RemoveFromRoleAsync(AppUser user, string roleName, CancellationToken cancellationToken)
+        {
+            var claimsToDelete = (await GetClaimsAsync(user, cancellationToken))
+                .Where(claim => claim.Type == ClaimTypes.Role && _normalizer.NormalizeName(claim.Value) == roleName);
+
+            await RemoveClaimsAsync(user, claimsToDelete, cancellationToken);
+        }
+
+        public async Task<IList<string>> GetRolesAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return (await GetClaimsAsync(user, cancellationToken))
+                 .Where(claim => claim.Type == ClaimTypes.Role)
+                 .Distinct().Select(claim => _normalizer.NormalizeName(claim.Value))
+                 .ToList();
+        }
+
+        public async Task<bool> IsInRoleAsync(AppUser user, string roleName, CancellationToken cancellationToken)
+        {
+            return (await GetRolesAsync(user, cancellationToken)).Any(role => _normalizer.NormalizeName(role) == roleName);
+        }
+
+        public Task<IList<AppUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
+        {
+            return GetUsersForClaimAsync(new Claim(ClaimTypes.Role, roleName), cancellationToken);
         }
     }
 }
