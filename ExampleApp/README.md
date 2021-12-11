@@ -5,8 +5,9 @@ Based on the Web Application built in the Book ['Pro ASP.NET Core Identity'](htt
 This application corresponds to the ExampleApp built in Part II of the book.
 
 > In this part of the book, I explain how Identity works,
-revisiting the major features and describing what happens behind the scenes. I create custom user role stores,
-use custom user and role classes, and implement many of the interfaces that ASP.NET Core Identity uses.
+revisiting the major features and describing what happens behind the scenes. 
+I create custom user role stores, use custom user and role classes, 
+and implement many of the interfaces that ASP.NET Core Identity uses.
 
 ## Prerequisites
 

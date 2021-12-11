@@ -7,3 +7,10 @@
 {
     <a asp-page="claims" asp-route-id="@Model" class="btn btn-sm btn-info">Claims</a>
 }
+
+@if (UserManager.SupportsUserRole)
+{
+    <a asp-page="userroles" asp-route-id="@Model" class="btn btn-sm btn-info">
+        Roles
+    </a>
+}
