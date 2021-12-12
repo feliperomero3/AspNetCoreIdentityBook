@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using ExampleApp.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -27,13 +28,15 @@ namespace ExampleApp.Pages.Store
             var user = await GetUser();
             if (user != null)
             {
-                Roles = await _userManager.GetRolesAsync(user);
+                Roles = (await _userManager.GetClaimsAsync(user))?
+                    .Where(c => c.Type == ClaimTypes.Role)
+                    .Select(c => c.Value);
             }
         }
 
         public async Task<IActionResult> OnPostAdd(string newRole)
         {
-            await _userManager.AddToRoleAsync(await GetUser(), newRole);
+            await _userManager.AddClaimAsync(await GetUser(), new Claim(ClaimTypes.Role, newRole));
             return RedirectToPage();
         }
 
