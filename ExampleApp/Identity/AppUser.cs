@@ -27,5 +27,7 @@ namespace ExampleApp.Identity
         public string Hobby { get; set; }
 
         public IList<Claim> Claims { get; set; }
+
+        public string SecurityStamp { get; set; }
     }
 }

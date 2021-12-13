@@ -17,7 +17,8 @@ namespace ExampleApp.Identity.Store
         IUserPhoneNumberStore<AppUser>,
         IUserClaimStore<AppUser>,
         IEqualityComparer<Claim>,
-        IUserRoleStore<AppUser>
+        IUserRoleStore<AppUser>,
+        IUserSecurityStampStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> users = new ConcurrentDictionary<string, AppUser>();
         private readonly ILookupNormalizer _normalizer;
@@ -216,7 +217,8 @@ namespace ExampleApp.Identity.Store
                     PhoneNumber = "123-4567",
                     IsPhoneNumberConfirmed = true,
                     FavoriteFood = customData[name].food,
-                    Hobby = customData[name].hobby
+                    Hobby = customData[name].hobby,
+                    SecurityStamp = "InitialStamp"
                 };
                 user.Claims = UsersAndClaims.UserData[user.UserName].Select(role => new Claim(ClaimTypes.Role, role)).ToList();
                 users.TryAdd(user.Id, user);
@@ -305,6 +307,17 @@ namespace ExampleApp.Identity.Store
         public Task<IList<AppUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
         {
             return GetUsersForClaimAsync(new Claim(ClaimTypes.Role, roleName), cancellationToken);
+        }
+
+        public Task SetSecurityStampAsync(AppUser user, string stamp, CancellationToken cancellationToken)
+        {
+            user.SecurityStamp = stamp;
+            return Task.CompletedTask;
+        }
+
+        public Task<string> GetSecurityStampAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.SecurityStamp);
         }
     }
 }
