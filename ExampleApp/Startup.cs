@@ -1,6 +1,7 @@
 using ExampleApp.Custom;
 using ExampleApp.Identity;
 using ExampleApp.Identity.Store;
+using ExampleApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,6 +26,8 @@ namespace ExampleApp
             services.AddSingleton<ILookupNormalizer, Normalizer>();
             services.AddSingleton<IUserStore<AppUser>, UserStore>();
             services.AddSingleton<IUserValidator<AppUser>, EmailValidator>();
+            services.AddSingleton<EmailService>();
+            services.AddSingleton<SmsSender>();
 
             services.AddAuthorization(options => AuthorizationPolicies.AddPolicies(options));
 
