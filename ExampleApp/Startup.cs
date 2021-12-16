@@ -29,6 +29,22 @@ namespace ExampleApp
             services.AddSingleton<EmailService>();
             services.AddSingleton<SmsSender>();
 
+            services.AddIdentityCore<AppUser>(opts =>
+            {
+                /* The TokenOptions class uses the DefaultProvider property as the value for the
+                 * ChangeEmailTokenProvider and EmailConfirmationTokenProvider configuration options. This means
+                 * you must use a custom name for your token generator and perform the additional step of setting the
+                 * EmailConfirmationTokenProvider and ChangeEmailTokenProvider options.
+                 */
+                opts.Tokens.EmailConfirmationTokenProvider = "SimpleEmail";
+                opts.Tokens.ChangeEmailTokenProvider = "SimpleEmail";
+            })
+            .AddTokenProvider<EmailConfirmationTokenGenerator>("SimpleEmail")
+            /* You can use TokenOptions.DefaultPhoneProvider and your generator
+             * will be used as the default generator for phone number confirmations.
+             */
+            .AddTokenProvider<PhoneConfirmationTokenGenerator>(TokenOptions.DefaultPhoneProvider);
+
             services.AddAuthorization(options => AuthorizationPolicies.AddPolicies(options));
 
             services.AddRazorPages();
