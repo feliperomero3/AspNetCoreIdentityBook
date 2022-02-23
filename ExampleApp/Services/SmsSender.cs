@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Diagnostics;
 using ExampleApp.Identity;
 
 namespace ExampleApp.Services
@@ -7,15 +7,15 @@ namespace ExampleApp.Services
     {
         public void SendMessage(AppUser user, params string[] body)
         {
-            Console.WriteLine("--- SMS begins ---");
-            Console.WriteLine($"To: {user.PhoneNumber}");
+            Debug.WriteLine("--- SMS begins ---");
+            Debug.WriteLine($"To: {user.PhoneNumber}");
 
             foreach (var str in body)
             {
-                Console.WriteLine(str);
+                Debug.WriteLine(str);
             }
 
-            Console.WriteLine("--- SMS ends ---");
+            Debug.WriteLine("--- SMS ends ---");
         }
     }
 }

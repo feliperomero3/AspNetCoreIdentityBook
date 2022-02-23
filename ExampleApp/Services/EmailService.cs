@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Diagnostics;
 using ExampleApp.Identity;
 
 namespace ExampleApp.Services
@@ -7,16 +7,16 @@ namespace ExampleApp.Services
     {
         public void SendMessage(AppUser user, string subject, params string[] body)
         {
-            Console.WriteLine("--- Email begins ---");
-            Console.WriteLine($"To: {user.EmailAddress}");
-            Console.WriteLine($"Subject: {subject}");
+            Debug.WriteLine("--- Email begins ---");
+            Debug.WriteLine($"To: {user.EmailAddress}");
+            Debug.WriteLine($"Subject: {subject}");
 
             foreach (var str in body)
             {
-                Console.WriteLine(str);
+                Debug.WriteLine(str);
             }
 
-            Console.WriteLine("--- Email ends ---");
+            Debug.WriteLine("--- Email ends ---");
         }
     }
 }

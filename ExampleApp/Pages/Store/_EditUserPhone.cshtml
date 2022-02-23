@@ -5,7 +5,15 @@
     <tr>
         <td>Phone</td>
         <td>
-            <input class="w-00" asp-for="PhoneNumber" />
+            @if (await UserManager.FindByIdAsync(Model.Id) == null)
+            {
+                <input class="w-00" asp-for="PhoneNumber" />
+            }
+            else
+            {
+                @Model.PhoneNumber
+                <a class="btn btn-sm btn-secondary align-top" asp-page="EmailPhoneChange" asp-route-id="@Model.Id" asp-route-datatype="phone">Change</a>
+            }
             <input type="hidden" asp-for="IsPhoneNumberConfirmed" />
         </td>
     </tr>

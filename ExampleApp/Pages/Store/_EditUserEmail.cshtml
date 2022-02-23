@@ -5,7 +5,15 @@
     <tr>
         <td>Email</td>
         <td>
-            <input class="w-00" asp-for="EmailAddress" />
+            @if (await UserManager.FindByIdAsync(Model.Id) == null)
+            {
+                <input class="w-00" asp-for="EmailAddress" />
+            }
+            else
+            {
+                @Model.EmailAddress
+                <a class="btn btn-sm btn-secondary align-top" asp-page="EmailPhoneChange" asp-route-id="@Model.Id" asp-route-datatype="email">Change</a>
+            }
         </td>
     </tr>
     <tr>
