@@ -27,5 +27,9 @@ jobs:
       working-directory: IdentityApp
     - name: Build projects
       run: |
-        dotnet build --no-restore --configuration release IdentityApp\IdentityApp.sln
-        dotnet build --no-restore --configuration release ExampleApp\ExampleApp.sln
+        dotnet build --no-restore --configuration Release --verbosity normal IdentityApp\IdentityApp.sln
+        dotnet build --no-restore --configuration Release --verbosity normal ExampleApp\ExampleApp.sln
+    - name: Publish projects
+      run: |
+        dotnet publish --no-build --configuration Release --verbosity normal IdentityApp\IdentityApp.sln
+        dotnet publish --no-build --configuration Release --verbosity normal ExampleApp\ExampleApp.sln
