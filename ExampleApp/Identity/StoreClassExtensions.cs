@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ExampleApp.Identity
 {
-    public static class StoreClassExtentions
+    public static class StoreClassExtensions
     {
         public static T UpdateFrom<T>(this T target, T source)
         {
@@ -27,8 +27,7 @@ namespace ExampleApp.Identity
 
                     if (sourceList != null)
                     {
-                        prop.SetValue(target, Activator.CreateInstance(listType,
-                        sourceList));
+                        prop.SetValue(target, Activator.CreateInstance(listType, sourceList));
                     }
                 }
                 else
