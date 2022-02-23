@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ExampleApp.Custom
 {
-    public class CustomRequirementsHandler : IAuthorizationHandler
+    public class CustomRequirementHandler : IAuthorizationHandler
     {
         public Task HandleAsync(AuthorizationHandlerContext context)
         {
