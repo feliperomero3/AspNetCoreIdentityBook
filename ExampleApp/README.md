@@ -1,12 +1,14 @@
 # ExampleApp
 
-Based on the Web Application built in the Book ['Pro ASP.NET Core Identity'](https://www.apress.com/la/book/9781484268575) by Adam Freeman (Apress, 2021).
+[![.NET][badge]][2]
+
+Based on the Web Application built in the Book ['Pro ASP.NET Core Identity'][1] by Adam Freeman (Apress, 2021).
 
 This application corresponds to the ExampleApp built in Part II of the book.
 
 > In this part of the book, I explain how Identity works,
-revisiting the major features and describing what happens behind the scenes. 
-I create custom user role stores, use custom user and role classes, 
+revisiting the major features and describing what happens behind the scenes.
+I create custom user role stores, use custom user and role classes,
 and implement many of the interfaces that ASP.NET Core Identity uses.
 
 ## Prerequisites
@@ -25,3 +27,7 @@ and implement many of the interfaces that ASP.NET Core Identity uses.
 [MIT License](../LICENSE)
 
 Copyright (c) 2021 Felipe Romero
+
+[1]: https://www.apress.com/la/book/9781484268575
+[2]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/dotnet.yml
+[badge]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/dotnet.yml/badge.svg
