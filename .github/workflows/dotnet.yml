@@ -33,3 +33,10 @@ jobs:
       run: |
         dotnet publish --no-build --configuration Release --verbosity normal IdentityApp\IdentityApp.sln
         dotnet publish --no-build --configuration Release --verbosity normal ExampleApp\ExampleApp.sln
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: AspNetCoreIdentityBook
+        path: | 
+          src\IdentityApp\Release\net5.0\publish
+          src\ExampleApp\Release\net5.0\publish
