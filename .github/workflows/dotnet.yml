@@ -29,6 +29,17 @@ jobs:
       run: |
         dotnet build --no-restore --configuration Release --verbosity normal IdentityApp\IdentityApp.sln
         dotnet build --no-restore --configuration Release --verbosity normal ExampleApp\ExampleApp.sln
+    - name: Security scan
+      run: |
+        dotnet tool install -g security-scan
+        security-scan IdentityApp\IdentityApp.sln --export=IdentityApp.sarif
+        security-scan ExampleApp\ExampleApp.sln --export=ExampleApp.sarif
+
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: .
+        category: security-scan
     - name: Publish projects
       run: |
         dotnet publish --no-build --configuration Release --verbosity normal IdentityApp\IdentityApp.sln
