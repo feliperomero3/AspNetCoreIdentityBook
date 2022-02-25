@@ -1,4 +1,4 @@
-name: .NET
+name: AspNetCoreIdentityBook-CI
 
 on:
   push:

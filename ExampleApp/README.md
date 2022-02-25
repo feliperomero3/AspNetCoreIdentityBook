@@ -1,6 +1,6 @@
 # ExampleApp
 
-[![.NET][badge]][2]
+[![Build status][badge]][2]
 
 Based on the Web Application built in the Book ['Pro ASP.NET Core Identity'][1] by Adam Freeman (Apress, 2021).
 
