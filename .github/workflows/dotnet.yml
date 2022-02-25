@@ -38,5 +38,5 @@ jobs:
       with:
         name: AspNetCoreIdentityBook
         path: | 
-          src\IdentityApp\Release\net5.0\publish
-          src\ExampleApp\Release\net5.0\publish
+          IdentityApp\Release\net5.0\publish
+          ExampleApp\Release\net5.0\publish
