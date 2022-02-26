@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
+using System.Linq;
 using System.Threading.Tasks;
-using ExampleApp.Custom;
-using Microsoft.AspNetCore.Authentication;
+using ExampleApp.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,7 +11,16 @@ namespace ExampleApp.Pages
 {
     public class SignInModel : PageModel
     {
-        public SelectList Users => new(UsersAndClaims.Users, User.Identity.Name);
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
+
+        public SignInModel(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
+
+        public SelectList Users => new(_userManager.Users.OrderBy(u => u.EmailAddress), "EmailAddress", "EmailAddress");
 
         public string Username { get; set; }
 
@@ -30,12 +39,9 @@ namespace ExampleApp.Pages
         {
             returnUrl ??= Url.Content("~/");
 
-            var claim = new Claim(ClaimTypes.Name, username);
-            var identity = new ClaimsIdentity(ExampleAppConstants.Scheme);
+            var user = await _userManager.FindByEmailAsync(username);
 
-            identity.AddClaim(claim);
-
-            await HttpContext.SignInAsync(new ClaimsPrincipal(identity));
+            await _signInManager.SignInAsync(user, isPersistent: false);
 
             return LocalRedirect(returnUrl);
         }
