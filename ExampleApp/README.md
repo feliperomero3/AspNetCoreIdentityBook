@@ -1,6 +1,6 @@
 # ExampleApp
 
-[![Build status][badge]][2]
+[![Build status][ci-badge]][ci-status]
 
 Based on the Web Application built in the Book ['Pro ASP.NET Core Identity'][1] by Adam Freeman (Apress, 2021).
 
@@ -29,5 +29,5 @@ and implement many of the interfaces that ASP.NET Core Identity uses.
 Copyright (c) 2021 Felipe Romero
 
 [1]: https://www.apress.com/la/book/9781484268575
-[2]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/dotnet.yml
-[badge]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/dotnet.yml/badge.svg
+[ci-status]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/AspNetCoreIdentityBook-CI.yml
+[ci-badge]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/AspNetCoreIdentityBook-CI.yml/badge.svg
