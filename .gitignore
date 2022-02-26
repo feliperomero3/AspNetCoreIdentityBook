@@ -367,3 +367,4 @@ FodyWeavers.xsd
 
 # Third-party libraries
 **/lib/fontawesome-free
+*.sarif
