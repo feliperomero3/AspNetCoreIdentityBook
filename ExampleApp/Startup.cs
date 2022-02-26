@@ -28,6 +28,7 @@ namespace ExampleApp
             services.AddSingleton<EmailService>();
             services.AddSingleton<SmsSender>();
             services.AddSingleton<IUserClaimsPrincipalFactory<AppUser>, AppUserClaimsPrincipalFactory>();
+            services.AddSingleton<IPasswordHasher<AppUser>, SimplePasswordHasher>();
 
             services.AddIdentityCore<AppUser>(opts =>
             {
