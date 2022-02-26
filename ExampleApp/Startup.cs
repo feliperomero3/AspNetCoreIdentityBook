@@ -2,7 +2,6 @@ using ExampleApp.Custom;
 using ExampleApp.Identity;
 using ExampleApp.Identity.Store;
 using ExampleApp.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,8 +14,8 @@ namespace ExampleApp
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
+            services.AddAuthentication(IdentityConstants.ApplicationScheme)
+                .AddCookie(IdentityConstants.ApplicationScheme, options =>
                 {
                     options.LoginPath = "/signin";
                     options.AccessDeniedPath = $"/signin/{StatusCodes.Status403Forbidden}";
@@ -28,6 +27,7 @@ namespace ExampleApp
             services.AddSingleton<IUserValidator<AppUser>, EmailValidator>();
             services.AddSingleton<EmailService>();
             services.AddSingleton<SmsSender>();
+            services.AddSingleton<IUserClaimsPrincipalFactory<AppUser>, AppUserClaimsPrincipalFactory>();
 
             services.AddIdentityCore<AppUser>(opts =>
             {
@@ -43,7 +43,8 @@ namespace ExampleApp
             /* You can use TokenOptions.DefaultPhoneProvider and your generator
              * will be used as the default generator for phone number confirmations.
              */
-            .AddTokenProvider<PhoneConfirmationTokenGenerator>(TokenOptions.DefaultPhoneProvider);
+            .AddTokenProvider<PhoneConfirmationTokenGenerator>(TokenOptions.DefaultPhoneProvider)
+            .AddSignInManager();
 
             services.AddAuthorization(options => AuthorizationPolicies.AddPolicies(options));
 
@@ -59,8 +60,6 @@ namespace ExampleApp
             app.UseAuthentication();
 
             app.UseRouting();
-
-            app.UseMiddleware<RoleMemberships>();
 
             app.UseAuthorization();
 
