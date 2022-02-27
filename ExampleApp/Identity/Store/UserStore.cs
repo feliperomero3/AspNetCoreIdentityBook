@@ -21,7 +21,7 @@ namespace ExampleApp.Identity.Store
         IUserSecurityStampStore<AppUser>,
         IUserPasswordStore<AppUser>
     {
-        private readonly ConcurrentDictionary<string, AppUser> users = new ConcurrentDictionary<string, AppUser>();
+        private readonly ConcurrentDictionary<string, AppUser> _users = new ConcurrentDictionary<string, AppUser>();
         private readonly ILookupNormalizer _normalizer;
         private readonly IPasswordHasher<AppUser> _passwordHasher;
 
@@ -62,7 +62,7 @@ namespace ExampleApp.Identity.Store
 
         public Task<IdentityResult> CreateAsync(AppUser user, CancellationToken cancellationToken)
         {
-            if (!users.ContainsKey(user.Id) && users.TryAdd(user.Id, user))
+            if (!_users.ContainsKey(user.Id) && _users.TryAdd(user.Id, user))
             {
                 return Task.FromResult(IdentityResult.Success);
             }
@@ -71,9 +71,9 @@ namespace ExampleApp.Identity.Store
 
         public Task<IdentityResult> UpdateAsync(AppUser user, CancellationToken cancellationToken)
         {
-            if (users.ContainsKey(user.Id))
+            if (_users.ContainsKey(user.Id))
             {
-                users[user.Id].UpdateFrom(user);
+                _users[user.Id].UpdateFrom(user);
                 return Task.FromResult(IdentityResult.Success);
             }
             return Task.FromResult(Error);
@@ -81,7 +81,7 @@ namespace ExampleApp.Identity.Store
 
         public Task<IdentityResult> DeleteAsync(AppUser user, CancellationToken cancellationToken)
         {
-            if (users.ContainsKey(user.Id) && users.TryRemove(user.Id, out user))
+            if (_users.ContainsKey(user.Id) && _users.TryRemove(user.Id, out user))
             {
                 return Task.FromResult(IdentityResult.Success);
             }
@@ -90,14 +90,14 @@ namespace ExampleApp.Identity.Store
 
         public Task<AppUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
-            var user = users.ContainsKey(userId) ? users[userId].Clone() : null;
+            var user = _users.ContainsKey(userId) ? _users[userId].Clone() : null;
 
             return Task.FromResult(user);
         }
 
         public Task<AppUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
-            var user = users.Values.FirstOrDefault(user => user.NormalizedUserName == normalizedUserName);
+            var user = _users.Values.FirstOrDefault(user => user.NormalizedUserName == normalizedUserName);
 
             return Task.FromResult(user?.Clone());
         }
@@ -127,7 +127,7 @@ namespace ExampleApp.Identity.Store
             return Task.FromResult(user.UserName = userName);
         }
 
-        public IQueryable<AppUser> Users => users.Values.Select(user => user.Clone()).AsQueryable();
+        public IQueryable<AppUser> Users => _users.Values.Select(user => user.Clone()).AsQueryable();
 
         public Task SetEmailAsync(AppUser user, string email, CancellationToken cancellationToken)
         {
@@ -225,7 +225,7 @@ namespace ExampleApp.Identity.Store
                 };
                 user.Claims = UsersAndClaims.UserData[user.UserName].Select(role => new Claim(ClaimTypes.Role, role)).ToList();
                 user.PasswordHash = _passwordHasher.HashPassword(user, "MySecret1$");
-                users.TryAdd(user.Id, user);
+                _users.TryAdd(user.Id, user);
             }
         }
 
