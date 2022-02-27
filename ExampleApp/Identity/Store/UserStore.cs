@@ -18,14 +18,17 @@ namespace ExampleApp.Identity.Store
         IUserClaimStore<AppUser>,
         IEqualityComparer<Claim>,
         IUserRoleStore<AppUser>,
-        IUserSecurityStampStore<AppUser>
+        IUserSecurityStampStore<AppUser>,
+        IUserPasswordStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> users = new ConcurrentDictionary<string, AppUser>();
         private readonly ILookupNormalizer _normalizer;
+        private readonly IPasswordHasher<AppUser> _passwordHasher;
 
-        public UserStore(ILookupNormalizer normalizer)
+        public UserStore(ILookupNormalizer normalizer, IPasswordHasher<AppUser> passwordHasher)
         {
             _normalizer = normalizer;
+            _passwordHasher = passwordHasher;
             SeedStore();
         }
 
@@ -221,6 +224,7 @@ namespace ExampleApp.Identity.Store
                     SecurityStamp = "InitialStamp"
                 };
                 user.Claims = UsersAndClaims.UserData[user.UserName].Select(role => new Claim(ClaimTypes.Role, role)).ToList();
+                user.PasswordHash = _passwordHasher.HashPassword(user, "MySecret1$");
                 users.TryAdd(user.Id, user);
             }
         }
@@ -318,6 +322,22 @@ namespace ExampleApp.Identity.Store
         public Task<string> GetSecurityStampAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.SecurityStamp);
+        }
+
+        public Task SetPasswordHashAsync(AppUser user, string passwordHash, CancellationToken cancellationToken)
+        {
+            user.PasswordHash = passwordHash;
+            return Task.CompletedTask;
+        }
+
+        public Task<string> GetPasswordHashAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.PasswordHash);
+        }
+
+        public Task<bool> HasPasswordAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
         }
     }
 }
