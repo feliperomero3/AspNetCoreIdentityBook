@@ -1,9 +1,6 @@
 ﻿@page "{code:int?}"
 @model SignInModel
 @using Microsoft.AspNetCore.Http
-@{
-
-}
 
 @if (Model.Code == StatusCodes.Status401Unauthorized)
 {
@@ -33,5 +30,15 @@ else if (Model.Code == StatusCodes.Status403Forbidden)
             <input class="form-control" type="password" name="password" />
         </div>
         <button class="btn btn-info" type="submit">Sign In</button>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a class="btn btn-secondary" asp-page="/Store/PasswordChange" asp-route-id="@Model.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value">
+                Change Password
+            </a>
+        }
+        else
+        {
+            <a class="btn btn-secondary" href="/password/reset">Reset Password</a>
+        }
     </form>
 </div>

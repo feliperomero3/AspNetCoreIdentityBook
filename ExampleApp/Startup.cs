@@ -39,6 +39,7 @@ namespace ExampleApp
                  */
                 opts.Tokens.EmailConfirmationTokenProvider = "SimpleEmail";
                 opts.Tokens.ChangeEmailTokenProvider = "SimpleEmail";
+                opts.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultPhoneProvider;
             })
             .AddTokenProvider<EmailConfirmationTokenGenerator>("SimpleEmail")
             /* You can use TokenOptions.DefaultPhoneProvider and your generator
