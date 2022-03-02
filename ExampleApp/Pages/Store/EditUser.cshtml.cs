@@ -1,8 +1,8 @@
-using System.Threading.Tasks;
 using ExampleApp.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Threading.Tasks;
 
 namespace ExampleApp.Pages.Store
 {
@@ -25,30 +25,46 @@ namespace ExampleApp.Pages.Store
             }
         }
 
-        public async Task<IActionResult> OnPost(AppUser user)
+        public async Task<IActionResult> OnPostAsync(AppUser user, string newPassword)
         {
-            IdentityResult result;
+            var result = IdentityResult.Success;
 
             var storeUser = await _userManager.FindByIdAsync(user.Id);
 
             if (storeUser == null)
             {
-                result = await _userManager.CreateAsync(user);
+                if (string.IsNullOrEmpty(newPassword))
+                {
+                    ModelState.AddModelError(string.Empty, "Password Required.");
+                    return Page();
+                }
+                result = await _userManager.CreateAsync(user, newPassword);
             }
             else
             {
-                storeUser.UpdateFrom(user, out bool IsChanged);
+                storeUser.UpdateFrom(user, out var IsChanged);
+
+                if (newPassword != null)
+                {
+                    if (await _userManager.HasPasswordAsync(storeUser))
+                    {
+                        await _userManager.RemovePasswordAsync(storeUser);
+                    }
+                    result = await _userManager.AddPasswordAsync(storeUser, newPassword);
+                }
 
                 if (IsChanged && _userManager.SupportsUserSecurityStamp)
                 {
                     await _userManager.UpdateSecurityStampAsync(storeUser);
                 }
-
-                result = await _userManager.UpdateAsync(storeUser);
+                if (result != null && result.Succeeded)
+                {
+                    result = await _userManager.UpdateAsync(storeUser);
+                }
             }
             if (result.Succeeded)
             {
-                return RedirectToPage("./Users");
+                return RedirectToPage("Users");
             }
             else
             {
