@@ -29,6 +29,7 @@ namespace ExampleApp
             services.AddSingleton<SmsSender>();
             services.AddSingleton<IUserClaimsPrincipalFactory<AppUser>, AppUserClaimsPrincipalFactory>();
             services.AddSingleton<IPasswordHasher<AppUser>, SimplePasswordHasher>();
+            services.AddSingleton<IPasswordValidator<AppUser>, PasswordValidator>();
 
             services.AddIdentityCore<AppUser>(opts =>
             {
@@ -40,6 +41,11 @@ namespace ExampleApp
                 opts.Tokens.EmailConfirmationTokenProvider = "SimpleEmail";
                 opts.Tokens.ChangeEmailTokenProvider = "SimpleEmail";
                 opts.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultPhoneProvider;
+                opts.Password.RequireNonAlphanumeric = false;
+                opts.Password.RequireLowercase = false;
+                opts.Password.RequireUppercase = false;
+                opts.Password.RequireDigit = false;
+                opts.Password.RequiredLength = 8;
             })
             .AddTokenProvider<EmailConfirmationTokenGenerator>("SimpleEmail")
             /* You can use TokenOptions.DefaultPhoneProvider and your generator
