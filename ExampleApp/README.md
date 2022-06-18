@@ -18,7 +18,7 @@ and implement many of the interfaces that ASP.NET Core Identity uses.
 ## Getting started
 
 1. Clone the project.
-1. Open the solution file `ExampleApp.sln` with Visual Studio 2019.
+1. Open the solution file `ExampleApp.sln`.
 1. Press F5 to start the application.
 1. Open your browser and go to <https://localhost:44324> (if the browser is not launched automatically).
 
@@ -26,7 +26,7 @@ and implement many of the interfaces that ASP.NET Core Identity uses.
 
 [MIT License](../LICENSE)
 
-Copyright (c) 2021 Felipe Romero
+Copyright &copy; 2021 Felipe Romero
 
 [1]: https://www.apress.com/la/book/9781484268575
 [ci-status]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/AspNetCoreIdentityBook-CI.yml
