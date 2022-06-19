@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -44,12 +45,13 @@ namespace ExampleApp.Identity.Store
 
         public Task<AppRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(_roles.ContainsKey(roleId) ? _roles[roleId].Clone() : null);
         }
 
         public Task<AppRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var appRole = _roles.Values.FirstOrDefault(r => r.NormalizedName == normalizedRoleName);
+            return Task.FromResult(appRole?.Clone());
         }
 
         public Task<string> GetNormalizedRoleNameAsync(AppRole role, CancellationToken cancellationToken)
