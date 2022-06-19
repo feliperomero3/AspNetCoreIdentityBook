@@ -54,32 +54,43 @@ namespace ExampleApp.Identity.Store
 
         public Task<string> GetNormalizedRoleNameAsync(AppRole role, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(role.NormalizedName);
         }
 
         public Task<string> GetRoleIdAsync(AppRole role, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(role.Id);
         }
 
         public Task<string> GetRoleNameAsync(AppRole role, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(role.Name);
         }
 
         public Task SetNormalizedRoleNameAsync(AppRole role, string normalizedName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            role.NormalizedName = normalizedName;
+            return Task.CompletedTask;
         }
 
         public Task SetRoleNameAsync(AppRole role, string roleName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            role.Name = roleName;
+            return Task.CompletedTask;
+        }
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().Name);
+            }
         }
 
         public void Dispose()
         {
             _disposed = true;
+            GC.SuppressFinalize(this);
         }
     }
 }
