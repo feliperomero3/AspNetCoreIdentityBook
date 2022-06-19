@@ -21,15 +21,14 @@ namespace ExampleApp
                     options.AccessDeniedPath = $"/signin/{StatusCodes.Status403Forbidden}";
                 });
 
-            services.AddIdentityCore<AppUser>();
             services.AddSingleton<ILookupNormalizer, Normalizer>();
             services.AddSingleton<IUserStore<AppUser>, UserStore>();
             services.AddSingleton<IUserValidator<AppUser>, EmailValidator>();
             services.AddSingleton<EmailService>();
             services.AddSingleton<SmsSender>();
-            services.AddSingleton<IUserClaimsPrincipalFactory<AppUser>, AppUserClaimsPrincipalFactory>();
             services.AddSingleton<IPasswordHasher<AppUser>, SimplePasswordHasher>();
             services.AddSingleton<IPasswordValidator<AppUser>, PasswordValidator>();
+            services.AddSingleton<IRoleStore<AppRole>, RoleStore>();
 
             services.AddIdentityCore<AppUser>(opts =>
             {
@@ -52,8 +51,10 @@ namespace ExampleApp
              * will be used as the default generator for phone number confirmations.
              */
             .AddTokenProvider<PhoneConfirmationTokenGenerator>(TokenOptions.DefaultPhoneProvider)
-            .AddSignInManager();
+            .AddSignInManager()
+            .AddRoles<AppRole>();
 
+            services.AddSingleton<IUserClaimsPrincipalFactory<AppUser>, AppUserClaimsPrincipalFactory>();
             services.AddAuthorization(options => AuthorizationPolicies.AddPolicies(options));
 
             services.AddRazorPages();
