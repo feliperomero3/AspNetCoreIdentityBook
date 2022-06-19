@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ExampleApp.Identity.Store
 {
-    public class RoleStore : IRoleStore<AppRole>
+    public class RoleStore : IRoleStore<AppRole>, IQueryableRoleStore<AppRole>
     {
         private readonly ConcurrentDictionary<string, AppRole> _roles = new ConcurrentDictionary<string, AppRole>();
         private bool _disposed;
@@ -17,6 +17,8 @@ namespace ExampleApp.Identity.Store
             Code = "StorageFailure",
             Description = "Role Store Error"
         });
+
+        public IQueryable<AppRole> Roles => _roles.Values.Select(role => role.Clone()).AsQueryable();
 
         public Task<IdentityResult> CreateAsync(AppRole role, CancellationToken cancellationToken)
         {
