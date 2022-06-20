@@ -11,32 +11,7 @@ namespace ExampleApp.Identity.Store
     public class RoleStore : IRoleStore<AppRole>, IQueryableRoleStore<AppRole>
     {
         private readonly ConcurrentDictionary<string, AppRole> _roles = new ConcurrentDictionary<string, AppRole>();
-        private readonly ILookupNormalizer _normalizer;
         private bool _disposed;
-
-        public RoleStore(ILookupNormalizer normalizer)
-        {
-            _normalizer = normalizer;
-            SeedStore();
-        }
-
-        private void SeedStore()
-        {
-            var roleData = new[] { "Administrator", "User", "Sales", "Support" };
-            var idCounter = 0;
-
-            foreach (string roleName in roleData)
-            {
-                AppRole role = new AppRole
-                {
-                    Id = (++idCounter).ToString(),
-                    Name = roleName,
-                    NormalizedName = _normalizer.NormalizeName(roleName)
-                };
-
-                _roles.TryAdd(role.Id, role);
-            }
-        }
 
         private static IdentityResult Error => IdentityResult.Failed(new IdentityError
         {
@@ -46,7 +21,7 @@ namespace ExampleApp.Identity.Store
 
         public IQueryable<AppRole> Roles => _roles.Values.Select(role => role.Clone()).AsQueryable();
 
-        public Task<IdentityResult> CreateAsync(AppRole role, CancellationToken cancellationToken)
+        public Task<IdentityResult> CreateAsync(AppRole role, CancellationToken cancellationToken = default)
         {
             return !_roles.ContainsKey(role.Id) && _roles.TryAdd(role.Id, role)
                 ? Task.FromResult(IdentityResult.Success)

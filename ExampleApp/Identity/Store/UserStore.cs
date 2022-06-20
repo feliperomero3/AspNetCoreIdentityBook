@@ -23,13 +23,10 @@ namespace ExampleApp.Identity.Store
     {
         private readonly ConcurrentDictionary<string, AppUser> _users = new ConcurrentDictionary<string, AppUser>();
         private readonly ILookupNormalizer _normalizer;
-        private readonly IPasswordHasher<AppUser> _passwordHasher;
 
         public UserStore(ILookupNormalizer normalizer, IPasswordHasher<AppUser> passwordHasher)
         {
             _normalizer = normalizer;
-            _passwordHasher = passwordHasher;
-            SeedStore();
         }
 
         private bool _disposed;
@@ -60,13 +57,11 @@ namespace ExampleApp.Identity.Store
             GC.SuppressFinalize(this);
         }
 
-        public Task<IdentityResult> CreateAsync(AppUser user, CancellationToken cancellationToken)
+        public Task<IdentityResult> CreateAsync(AppUser user, CancellationToken cancellationToken = default)
         {
-            if (!_users.ContainsKey(user.Id) && _users.TryAdd(user.Id, user))
-            {
-                return Task.FromResult(IdentityResult.Success);
-            }
-            return Task.FromResult(Error);
+            return !_users.ContainsKey(user.Id) && _users.TryAdd(user.Id, user)
+                ? Task.FromResult(IdentityResult.Success)
+                : Task.FromResult(Error);
         }
 
         public Task<IdentityResult> UpdateAsync(AppUser user, CancellationToken cancellationToken)
@@ -192,41 +187,6 @@ namespace ExampleApp.Identity.Store
             user.IsPhoneNumberConfirmed = confirmed;
 
             return Task.CompletedTask;
-        }
-
-        private void SeedStore()
-        {
-            var customData = new Dictionary<string, (string food, string hobby)>
-            {
-                { "Alice", ("Pizza", "Running") },
-                { "Bob", ("Ice Cream", "Cinema") },
-                { "Charlie", ("Burgers", "Cooking") }
-            };
-
-            var idCounter = 0;
-
-            static string EmailFromName(string name) => $"{name.ToLower()}@example.com";
-
-            foreach (var name in UsersAndClaims.Users)
-            {
-                var user = new AppUser
-                {
-                    Id = (++idCounter).ToString(),
-                    UserName = name,
-                    NormalizedUserName = _normalizer.NormalizeName(name),
-                    EmailAddress = EmailFromName(name),
-                    NormalizedEmailAddress = _normalizer.NormalizeEmail(EmailFromName(name)),
-                    IsEmailAddressConfirmed = true,
-                    PhoneNumber = "123-4567",
-                    IsPhoneNumberConfirmed = true,
-                    FavoriteFood = customData[name].food,
-                    Hobby = customData[name].hobby,
-                    SecurityStamp = "InitialStamp"
-                };
-                user.Claims = UsersAndClaims.UserData[user.UserName].Select(role => new Claim(ClaimTypes.Role, role)).ToList();
-                user.PasswordHash = _passwordHasher.HashPassword(user, "MySecret1$");
-                _users.TryAdd(user.Id, user);
-            }
         }
 
         public Task<IList<Claim>> GetClaimsAsync(AppUser user, CancellationToken cancellationToken)

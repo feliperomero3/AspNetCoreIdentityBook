@@ -29,6 +29,8 @@ namespace ExampleApp
             services.AddSingleton<IPasswordHasher<AppUser>, SimplePasswordHasher>();
             services.AddSingleton<IPasswordValidator<AppUser>, PasswordValidator>();
             services.AddSingleton<IRoleStore<AppRole>, RoleStore>();
+            services.AddSingleton<RoleStoreInitializer>();
+            services.AddSingleton<UserStoreInitializer>();
 
             services.AddIdentityCore<AppUser>(opts =>
             {
