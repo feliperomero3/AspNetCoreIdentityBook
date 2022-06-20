@@ -24,6 +24,8 @@ namespace ExampleApp
             var users = services.GetRequiredService<UserStoreInitializer>();
 
             users.SeedStore(userStore);
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
