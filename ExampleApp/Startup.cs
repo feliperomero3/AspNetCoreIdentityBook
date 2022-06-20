@@ -21,16 +21,18 @@ namespace ExampleApp
                     options.AccessDeniedPath = $"/signin/{StatusCodes.Status403Forbidden}";
                 });
 
+            services.AddSingleton<RoleStore>();
+            services.AddSingleton<UserStore>();
+            services.AddSingleton<RoleStoreInitializer>();
+            services.AddSingleton<UserStoreInitializer>();
             services.AddSingleton<ILookupNormalizer, Normalizer>();
-            services.AddSingleton<IUserStore<AppUser>, UserStore>();
+            services.AddSingleton<IUserStore<AppUser>>(sp => sp.GetRequiredService<UserStore>());
             services.AddSingleton<IUserValidator<AppUser>, EmailValidator>();
             services.AddSingleton<EmailService>();
             services.AddSingleton<SmsSender>();
             services.AddSingleton<IPasswordHasher<AppUser>, SimplePasswordHasher>();
             services.AddSingleton<IPasswordValidator<AppUser>, PasswordValidator>();
-            services.AddSingleton<IRoleStore<AppRole>, RoleStore>();
-            services.AddSingleton<RoleStoreInitializer>();
-            services.AddSingleton<UserStoreInitializer>();
+            services.AddSingleton<IRoleStore<AppRole>>(sp => sp.GetRequiredService<RoleStore>());
 
             services.AddIdentityCore<AppUser>(opts =>
             {
