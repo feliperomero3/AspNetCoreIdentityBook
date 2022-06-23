@@ -13,7 +13,8 @@ and implement many of the interfaces that ASP.NET Core Identity uses.
 
 ## Prerequisites
 
-- Visual Studio 2019
+- .NET 5
+- Visual Studio 2022
 
 ## Getting started
 
@@ -26,7 +27,7 @@ and implement many of the interfaces that ASP.NET Core Identity uses.
 
 [MIT License](../LICENSE)
 
-Copyright &copy; 2021 Felipe Romero
+Copyright &copy; 2022 Felipe Romero
 
 [1]: https://www.apress.com/la/book/9781484268575
 [ci-status]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/AspNetCoreIdentityBook-CI.yml

@@ -9,13 +9,13 @@ Based on the Web Application built in the Book ['Pro ASP.NET Core Identity'](htt
 ## Prerequisites
 
 - .NET 5
-- Visual Studio 2019 v16.10.x
+- Visual Studio 2022
 - (Optional) smtp4dev v3.1.3.2
 
 ## Getting started
 
 1. Clone the project.
-1. Open the solution file `IdentityApp.sln` with Visual Studio 2019.
+1. Open the solution file `IdentityApp.sln`.
 1. Right click the `IdentityApp` solution node in the Solution Explorer tool window and click 'Restore Client-Side Libraries' option.
 1. (Optional) Open a terminal and enter `smtp4dev` to start smtp4dev local SMTP and leave the terminal open. [Installation][smtp4dev].
 1. Press F5 to start the application.
@@ -25,7 +25,7 @@ Based on the Web Application built in the Book ['Pro ASP.NET Core Identity'](htt
 
 [MIT License](LICENSE)
 
-Copyright &copy; 2021 Felipe Romero
+Copyright &copy; 2022 Felipe Romero
 
 [ci-status]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/AspNetCoreIdentityBook-CI.yml
 [ci-badge]: https://github.com/feliperomero3/AspNetCoreIdentityBook/actions/workflows/AspNetCoreIdentityBook-CI.yml/badge.svg
