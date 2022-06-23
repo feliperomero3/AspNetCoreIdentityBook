@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 namespace ExampleApp.Identity.Store
 {
-    public class RoleStore : IRoleStore<AppRole>, IQueryableRoleStore<AppRole>
+    public class RoleStore : IRoleStore<AppRole>, IQueryableRoleStore<AppRole>, IRoleClaimStore<AppRole>
     {
         private readonly ConcurrentDictionary<string, AppRole> _roles = new ConcurrentDictionary<string, AppRole>();
         private bool _disposed;
@@ -20,6 +22,20 @@ namespace ExampleApp.Identity.Store
         });
 
         public IQueryable<AppRole> Roles => _roles.Values.Select(role => role.Clone()).AsQueryable();
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().Name);
+            }
+        }
+
+        public void Dispose()
+        {
+            _disposed = true;
+            GC.SuppressFinalize(this);
+        }
 
         public Task<IdentityResult> CreateAsync(AppRole role, CancellationToken cancellationToken = default)
         {
@@ -84,18 +100,21 @@ namespace ExampleApp.Identity.Store
             return Task.CompletedTask;
         }
 
-        protected void ThrowIfDisposed()
+        public Task<IList<Claim>> GetClaimsAsync(AppRole role, CancellationToken cancellationToken = default)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().Name);
-            }
+            return Task.FromResult(role.Claims ?? new List<Claim>());
         }
 
-        public void Dispose()
+        public Task AddClaimAsync(AppRole role, Claim claim, CancellationToken cancellationToken = default)
         {
-            _disposed = true;
-            GC.SuppressFinalize(this);
+            role.Claims.Add(claim);
+            return Task.CompletedTask;
+        }
+
+        public Task RemoveClaimAsync(AppRole role, Claim claim, CancellationToken cancellationToken = default)
+        {
+            role.Claims = role.Claims.Where(c => !(string.Equals(c.Type, claim.Type) && string.Equals(c.Value, claim.Value))).ToList();
+            return Task.CompletedTask;
         }
     }
 }
