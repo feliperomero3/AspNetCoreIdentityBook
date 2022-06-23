@@ -59,6 +59,7 @@ namespace ExampleApp
             .AddRoles<AppRole>();
 
             services.AddSingleton<IUserClaimsPrincipalFactory<AppUser>, AppUserClaimsPrincipalFactory>();
+            services.AddSingleton<IRoleValidator<AppRole>, RoleValidator>();
             services.AddAuthorization(options => AuthorizationPolicies.AddPolicies(options));
 
             services.AddRazorPages();
