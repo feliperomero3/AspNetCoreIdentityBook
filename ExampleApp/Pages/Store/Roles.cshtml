@@ -10,6 +10,7 @@
         <tr>
             <th>Name</th>
             <th>Number of Users in Role</th>
+            <th>Number of Claims in Role</th>
         </tr>
     </thead>
     <tbody>
@@ -20,6 +21,10 @@
                     <input name="name" form="@role.Id" value="@role.Name" />
                 </td>
                 <td>@((await Model.GetUsersInRole(role)).Length)</td>
+                <td>
+                    @(role.Claims?.Count() ?? 0)
+                    <a asp-page="RoleClaims" class="btn btn-secondary btn-sm ml-2" asp-route-id="@role.Id">Edit</a>
+                </td>
                 <td class="text-right pr-2">
                     <form method="post" id="@role.Id">
                         <input type="hidden" name="id" value="@role.Id" />
@@ -37,6 +42,7 @@
             <td>
                 <input name="name" form="newRole" placeholder="Enter Role Name" />
             </td>
+            <td></td>
             <td></td>
             <td class="text-right pr-2">
                 <form method="post" id="newRole">
