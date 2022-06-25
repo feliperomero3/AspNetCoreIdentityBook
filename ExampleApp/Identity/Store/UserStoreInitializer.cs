@@ -25,6 +25,7 @@ namespace ExampleApp.Identity.Store
                 { "Charlie", ("Burgers", "Cooking") }
             };
 
+            var twoFactorUsers = new[] { "Alice", "Charlie" };
             var idCounter = 0;
 
             static string EmailFromName(string name) => $"{name.ToLower()}@example.com";
@@ -43,7 +44,8 @@ namespace ExampleApp.Identity.Store
                     IsPhoneNumberConfirmed = true,
                     FavoriteFood = customData[name].food,
                     Hobby = customData[name].hobby,
-                    SecurityStamp = "InitialStamp"
+                    SecurityStamp = "InitialStamp",
+                    IsTwoFactorAuthenticationEnabled = twoFactorUsers.Contains(name)
                 };
 
                 user.Claims = UsersAndClaims.UserData[user.UserName].Select(role => new Claim(ClaimTypes.Role, role)).ToList();

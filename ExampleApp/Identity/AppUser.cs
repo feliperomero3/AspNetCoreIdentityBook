@@ -37,5 +37,7 @@ namespace ExampleApp.Identity
         public int FailedSignInAttemptsCount { get; set; }
 
         public DateTimeOffset? LockOutEndDate { get; set; }
+
+        public bool IsTwoFactorAuthenticationEnabled { get; set; }
     }
 }
