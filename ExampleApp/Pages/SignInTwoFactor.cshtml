@@ -1,0 +1,29 @@
+﻿@page
+@model ExampleApp.Pages.SignInTwoFactorModel
+
+<h4 class="bg-info text-white m-2 p-2">Two Factor Sign In</h4>
+
+<div class="text-danger m-2" asp-validation-summary="All"></div>
+
+<span class="m-2"> We have sent a security code to your phone. </span>
+
+<a class="btn btn-sm btn-secondary" asp-page="SignInTwoFactor">Resend Code</a>
+
+<div class="m-2">
+    <form method="post">
+        <div class="form-group">
+            <label for="smscode">Enter security Code:</label>
+            <input class="form-control" name="smscode" />
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="rememberMe" />
+            <label for="rememberMe" class="form-check-label">Remember Me</label>
+        </div>
+        <div class="mt-2">
+            <button class="btn btn-info" type="submit" disabled="@(!ModelState.IsValid)">
+                Sign In
+            </button>
+            <a class="btn btn-secondary" asp-page="Signin">Cancel</a>
+        </div>
+    </form>
+</div>
