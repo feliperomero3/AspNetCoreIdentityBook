@@ -72,6 +72,12 @@ namespace ExampleApp.Pages
 
                     return Page();
                 }
+                else if (result.RequiresTwoFactor)
+                {
+                    _logger.LogWarning("User {username} requires Two-Factor sign in.", username);
+
+                    return RedirectToPage("SignInTwoFactor", new { returnUrl = returnUrl });
+                }
                 else if (result.IsNotAllowed)
                 {
                     Message = "Sign In Not Allowed";
