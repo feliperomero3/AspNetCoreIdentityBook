@@ -3,7 +3,6 @@ using ExampleApp.Identity;
 using ExampleApp.Identity.Store;
 using ExampleApp.Services;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,6 +49,7 @@ namespace ExampleApp
                 opts.Password.RequireDigit = false;
                 opts.Password.RequiredLength = 8;
                 opts.Lockout.MaxFailedAccessAttempts = 3;
+                opts.SignIn.RequireConfirmedAccount = true;
             })
             .AddTokenProvider<EmailConfirmationTokenGenerator>("SimpleEmail")
             /* You can use TokenOptions.DefaultPhoneProvider and your generator
@@ -61,6 +61,8 @@ namespace ExampleApp
 
             services.AddScoped<IUserClaimsPrincipalFactory<AppUser>, AppUserClaimsPrincipalFactory>();
             services.AddSingleton<IRoleValidator<AppRole>, RoleValidator>();
+            services.AddSingleton<IUserConfirmation<AppUser>, UserConfirmation>();
+
             services.AddAuthorization(options => AuthorizationPolicies.AddPolicies(options));
 
             services.AddRazorPages();

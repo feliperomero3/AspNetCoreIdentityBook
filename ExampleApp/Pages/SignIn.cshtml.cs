@@ -72,6 +72,12 @@ namespace ExampleApp.Pages
 
                     return Page();
                 }
+                else if (result.IsNotAllowed)
+                {
+                    Message = "Sign In Not Allowed";
+
+                    return Page();
+                }
             }
 
             Message = "Access Denied";
