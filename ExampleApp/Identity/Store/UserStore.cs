@@ -20,7 +20,8 @@ namespace ExampleApp.Identity.Store
         IUserRoleStore<AppUser>,
         IUserSecurityStampStore<AppUser>,
         IUserPasswordStore<AppUser>,
-        IUserLockoutStore<AppUser>
+        IUserLockoutStore<AppUser>,
+        IUserTwoFactorStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> _users = new ConcurrentDictionary<string, AppUser>();
         private readonly ILookupNormalizer _normalizer;
@@ -337,6 +338,17 @@ namespace ExampleApp.Identity.Store
         {
             user.CanUserBeLockedOut = enabled;
             return Task.CompletedTask;
+        }
+
+        public Task SetTwoFactorEnabledAsync(AppUser user, bool enabled, CancellationToken cancellationToken)
+        {
+            user.IsTwoFactorAuthenticationEnabled = enabled;
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> GetTwoFactorEnabledAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.IsTwoFactorAuthenticationEnabled);
         }
     }
 }
