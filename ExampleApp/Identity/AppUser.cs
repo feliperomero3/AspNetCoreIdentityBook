@@ -31,5 +31,11 @@ namespace ExampleApp.Identity
         public string SecurityStamp { get; set; }
 
         public string PasswordHash { get; set; }
+
+        public bool CanUserBeLockedOut { get; set; } = true;
+
+        public int FailedSignInAttemptsCount { get; set; }
+
+        public DateTimeOffset? LockOutEndDate { get; set; }
     }
 }
