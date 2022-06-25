@@ -13,6 +13,11 @@ else if (Model.Code == StatusCodes.Status403Forbidden)
     <h3 class="bg-danger text-white text-center p-2">
         @Model.Code - Forbidden Response
     </h3>
+}else if (!string.IsNullOrEmpty(Model.Message))
+{
+    <h3 class="bg-danger text-white text-center p-2">
+        @Model.Message
+    </h3>   
 }
 
 <h4 class="bg-info text-white m-2 p-2">

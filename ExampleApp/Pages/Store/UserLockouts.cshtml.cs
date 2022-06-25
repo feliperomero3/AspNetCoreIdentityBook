@@ -33,7 +33,7 @@ namespace ExampleApp.Pages.Store
                     .GetValueOrDefault()
                     .Subtract(DateTimeOffset.Now);
 
-                return $"Locked Out ({remaining.Minutes} minutes " + $"{remaining.Seconds} seconds remaining)";
+                return $"Locked Out ({remaining.Minutes} minutes {remaining.Seconds} seconds remaining)";
             }
             return "(No Lockout)";
         }

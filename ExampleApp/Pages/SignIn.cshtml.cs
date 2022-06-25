@@ -1,13 +1,13 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using ExampleApp.Identity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace ExampleApp.Pages
@@ -33,6 +33,8 @@ namespace ExampleApp.Pages
 
         public string ReturnUrl { get; set; }
 
+        public string Message { get; set; }
+
         public void OnGet(int? code, string returnUrl = null)
         {
             Code = code;
@@ -54,12 +56,26 @@ namespace ExampleApp.Pages
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User {username} logged in.", username);
+                    _logger.LogInformation("User {username} signed in.", username);
+
                     return LocalRedirect(returnUrl);
+                }
+                else if (result.IsLockedOut)
+                {
+                    _logger.LogWarning("User {username} locked out.", username);
+
+                    TimeSpan remaining = (await _userManager.GetLockoutEndDateAsync(user))
+                        .GetValueOrDefault()
+                        .Subtract(DateTimeOffset.Now);
+
+                    Message = $"Locked Out ({remaining.Minutes} minutes {remaining.Seconds} seconds remaining)";
+
+                    return Page();
                 }
             }
 
-            Code = StatusCodes.Status401Unauthorized;
+            Message = "Access Denied";
+
             return Page();
         }
     }
