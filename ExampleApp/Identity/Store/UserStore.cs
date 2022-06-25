@@ -19,7 +19,8 @@ namespace ExampleApp.Identity.Store
         IEqualityComparer<Claim>,
         IUserRoleStore<AppUser>,
         IUserSecurityStampStore<AppUser>,
-        IUserPasswordStore<AppUser>
+        IUserPasswordStore<AppUser>,
+        IUserLockoutStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> _users = new ConcurrentDictionary<string, AppUser>();
         private readonly ILookupNormalizer _normalizer;
@@ -298,6 +299,44 @@ namespace ExampleApp.Identity.Store
         public Task<bool> HasPasswordAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
+        }
+
+        public Task<DateTimeOffset?> GetLockoutEndDateAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.LockOutEndDate);
+        }
+
+        public Task SetLockoutEndDateAsync(AppUser user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken)
+        {
+            user.LockOutEndDate = lockoutEnd;
+            return Task.CompletedTask;
+        }
+
+        public Task<int> IncrementAccessFailedCountAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(++user.FailedSignInAttemptsCount);
+        }
+
+        public Task ResetAccessFailedCountAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            user.FailedSignInAttemptsCount = 0;
+            return Task.CompletedTask;
+        }
+
+        public Task<int> GetAccessFailedCountAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.FailedSignInAttemptsCount);
+        }
+
+        public Task<bool> GetLockoutEnabledAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.CanUserBeLockedOut);
+        }
+
+        public Task SetLockoutEnabledAsync(AppUser user, bool enabled, CancellationToken cancellationToken)
+        {
+            user.CanUserBeLockedOut = enabled;
+            return Task.CompletedTask;
         }
     }
 }
