@@ -18,7 +18,9 @@ namespace ExampleApp
                 {
                     options.LoginPath = "/signin";
                     options.AccessDeniedPath = $"/signin/{StatusCodes.Status403Forbidden}";
-                });
+                })
+                .AddCookie(IdentityConstants.TwoFactorUserIdScheme)
+                .AddCookie(IdentityConstants.TwoFactorRememberMeScheme);
 
             services.AddSingleton<RoleStore>();
             services.AddSingleton<UserStore>();
@@ -56,6 +58,7 @@ namespace ExampleApp
              * will be used as the default generator for phone number confirmations.
              */
             .AddTokenProvider<PhoneConfirmationTokenGenerator>(TokenOptions.DefaultPhoneProvider)
+            .AddTokenProvider<TwoFactorSignInTokenGenerator>(IdentityConstants.TwoFactorUserIdScheme)
             .AddSignInManager()
             .AddRoles<AppRole>();
 
