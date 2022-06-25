@@ -9,13 +9,13 @@ namespace ExampleApp.Custom
     {
         private HttpContext _context;
         private AuthenticationScheme _scheme;
-        private const string cookieKey = "authUser";
+        private const string _cookieKey = "authUser";
 
         public Task<AuthenticateResult> AuthenticateAsync()
         {
             AuthenticateResult result;
 
-            var user = _context.Request.Cookies[cookieKey];
+            var user = _context.Request.Cookies[_cookieKey];
 
             if (user != null)
             {
@@ -56,14 +56,14 @@ namespace ExampleApp.Custom
 
         public Task SignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)
         {
-            _context.Response.Cookies.Append(cookieKey, user.Identity.Name, new CookieOptions { Secure = true, HttpOnly = true });
+            _context.Response.Cookies.Append(_cookieKey, user.Identity.Name, new CookieOptions { Secure = true, HttpOnly = true });
 
             return Task.CompletedTask;
         }
 
         public Task SignOutAsync(AuthenticationProperties properties)
         {
-            _context.Response.Cookies.Delete(cookieKey);
+            _context.Response.Cookies.Delete(_cookieKey);
 
             return Task.CompletedTask;
         }

@@ -7,13 +7,13 @@ namespace ExampleApp.Custom
     public class CustomAuthentication
     {
         private readonly RequestDelegate _next;
-        private const string cookieKey = "authUser";
+        private const string _cookieKey = "authUser";
 
         public CustomAuthentication(RequestDelegate requestDelegate) => _next = requestDelegate;
 
         public async Task Invoke(HttpContext context)
         {
-            var user = context.Request.Cookies[cookieKey];
+            var user = context.Request.Cookies[_cookieKey];
 
             if (!string.IsNullOrEmpty(user))
             {

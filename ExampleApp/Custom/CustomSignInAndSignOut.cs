@@ -7,7 +7,7 @@ namespace ExampleApp.Custom
 {
     public static class CustomSignInAndSignOut
     {
-        private const string cookieKey = "authUser";
+        private const string _cookieKey = "authUser";
 
         public static async Task SignIn(HttpContext context)
         {
