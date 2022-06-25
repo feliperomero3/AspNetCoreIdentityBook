@@ -68,8 +68,10 @@ namespace ExampleApp
             services.AddControllersWithViews();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
+            app.UseDeveloperExceptionPage();
+
             app.UseStaticFiles();
 
             app.UseAuthentication();
