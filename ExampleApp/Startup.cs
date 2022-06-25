@@ -49,6 +49,7 @@ namespace ExampleApp
                 opts.Password.RequireUppercase = false;
                 opts.Password.RequireDigit = false;
                 opts.Password.RequiredLength = 8;
+                opts.Lockout.MaxFailedAccessAttempts = 3;
             })
             .AddTokenProvider<EmailConfirmationTokenGenerator>("SimpleEmail")
             /* You can use TokenOptions.DefaultPhoneProvider and your generator
