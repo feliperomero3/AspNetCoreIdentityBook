@@ -12,6 +12,15 @@ namespace ExampleApp.Custom
             //AddDefaultPolicy(options);
             AddNamedPolicy(options);
             AddNotAdministratorPolicy(options);
+            AddTwoFactorAuthenticationPolicy(options);
+        }
+
+        private static void AddTwoFactorAuthenticationPolicy(AuthorizationOptions options)
+        {
+            options.AddPolicy("Full2FARequired", builder =>
+            {
+                builder.RequireClaim("amr", "mfa");
+            });
         }
 
         private static void AddFallbackPolicy(AuthorizationOptions options)
