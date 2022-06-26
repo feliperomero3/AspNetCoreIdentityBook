@@ -21,7 +21,8 @@ namespace ExampleApp.Identity.Store
         IUserSecurityStampStore<AppUser>,
         IUserPasswordStore<AppUser>,
         IUserLockoutStore<AppUser>,
-        IUserTwoFactorStore<AppUser>
+        IUserTwoFactorStore<AppUser>,
+        IUserAuthenticatorKeyStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> _users = new ConcurrentDictionary<string, AppUser>();
         private readonly ILookupNormalizer _normalizer;
@@ -349,6 +350,17 @@ namespace ExampleApp.Identity.Store
         public Task<bool> GetTwoFactorEnabledAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.IsTwoFactorAuthenticationEnabled);
+        }
+
+        public Task SetAuthenticatorKeyAsync(AppUser user, string key, CancellationToken cancellationToken)
+        {
+            user.AuthenticatorKey = key;
+            return Task.CompletedTask;
+        }
+
+        public Task<string> GetAuthenticatorKeyAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.AuthenticatorKey);
         }
     }
 }
