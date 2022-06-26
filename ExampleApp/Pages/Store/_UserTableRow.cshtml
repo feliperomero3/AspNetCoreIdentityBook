@@ -14,3 +14,10 @@
         Roles
     </a>
 }
+
+@if (UserManager.SupportsUserAuthenticatorKey)
+{
+    <a class="btn btn-sm btn-success" asp-page="AuthenticatorSetup" asp-route-id="@Model">
+        Authenticator
+    </a>
+}
