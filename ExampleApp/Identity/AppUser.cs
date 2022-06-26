@@ -39,5 +39,9 @@ namespace ExampleApp.Identity
         public DateTimeOffset? LockOutEndDate { get; set; }
 
         public bool IsTwoFactorAuthenticationEnabled { get; set; }
+
+        public bool IsAuthenticatorEnabled { get; set; }
+
+        public string AuthenticatorKey { get; set; }
     }
 }
