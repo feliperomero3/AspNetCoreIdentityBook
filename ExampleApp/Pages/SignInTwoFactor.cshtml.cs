@@ -4,6 +4,7 @@ using ExampleApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace ExampleApp.Pages
 {
@@ -20,22 +21,29 @@ namespace ExampleApp.Pages
             _smsSender = smsSender;
         }
 
+        public bool IsAuthenticatorEnabled { get; set; }
+
         public async Task OnGet()
         {
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
 
             if (user is not null)
             {
-                // The user's security token is updated to invalidate any previous tokens.
-                await _userManager.UpdateSecurityStampAsync(user);
+                IsAuthenticatorEnabled = user.IsAuthenticatorEnabled;
 
-                var token = await _userManager.GenerateTwoFactorTokenAsync(user, IdentityConstants.TwoFactorUserIdScheme);
+                if (!IsAuthenticatorEnabled)
+                {
+                    // The user's security token is updated to invalidate any previous tokens.
+                    await _userManager.UpdateSecurityStampAsync(user);
 
-                _smsSender.SendMessage(user, $"Your security code is {token}.");
+                    var token = await _userManager.GenerateTwoFactorTokenAsync(user, IdentityConstants.TwoFactorUserIdScheme);
+
+                    _smsSender.SendMessage(user, $"Your security code is {token}.");
+                }
             }
         }
 
-        public async Task<ActionResult> OnPost(string smscode, string rememberMe, [FromQuery] string returnUrl)
+        public async Task<ActionResult> OnPost(string code, string rememberMe, [FromQuery] string returnUrl)
         {
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
 
@@ -43,7 +51,20 @@ namespace ExampleApp.Pages
             {
                 var scheme = IdentityConstants.TwoFactorUserIdScheme;
 
-                var result = await _signInManager.TwoFactorSignInAsync(scheme, smscode, isPersistent: true, rememberClient: !string.IsNullOrEmpty(rememberMe));
+                SignInResult result;
+
+                IsAuthenticatorEnabled = user.IsAuthenticatorEnabled;
+
+                if (IsAuthenticatorEnabled)
+                {
+                    var authenticatorCode = code.Replace(" ", string.Empty);
+
+                    result = await _signInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, isPersistent: false, rememberClient: !string.IsNullOrEmpty(rememberMe));
+                }
+                else
+                {
+                    result = await _signInManager.TwoFactorSignInAsync(scheme, code, isPersistent: true, rememberClient: !string.IsNullOrEmpty(rememberMe));
+                }
 
                 if (result.Succeeded)
                 {
