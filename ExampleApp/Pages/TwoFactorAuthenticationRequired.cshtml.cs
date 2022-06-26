@@ -33,7 +33,7 @@ namespace ExampleApp.Pages
             // it will throw an exception, reporting there is no handler for the external scheme.
             await HttpContext.SignOutAsync();
 
-            return LocalRedirect($"signin?returnUrl={returnUrl}");
+            return Redirect($"signin?returnUrl={returnUrl}");
         }
     }
 }

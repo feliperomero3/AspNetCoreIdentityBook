@@ -53,7 +53,7 @@ namespace ExampleApp.Identity
             {
                 var path = $"{context.Request.Path}{context.Request.QueryString}";
 
-                return new RedirectToPageResult("/Full2FARequired", new { returnUrl = path });
+                return new RedirectToPageResult("TwoFactorAuthenticationRequired", new { returnUrl = path });
             }
 
             return null;
