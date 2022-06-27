@@ -22,9 +22,11 @@ namespace ExampleApp.Identity.Store
         IUserPasswordStore<AppUser>,
         IUserLockoutStore<AppUser>,
         IUserTwoFactorStore<AppUser>,
-        IUserAuthenticatorKeyStore<AppUser>
+        IUserAuthenticatorKeyStore<AppUser>,
+        IUserTwoFactorRecoveryCodeStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> _users = new ConcurrentDictionary<string, AppUser>();
+        private readonly Dictionary<string, IEnumerable<RecoveryCode>> _recoveryCodes = new Dictionary<string, IEnumerable<RecoveryCode>>();
         private readonly ILookupNormalizer _normalizer;
 
         public UserStore(ILookupNormalizer normalizer, IPasswordHasher<AppUser> passwordHasher)
@@ -361,6 +363,46 @@ namespace ExampleApp.Identity.Store
         public Task<string> GetAuthenticatorKeyAsync(AppUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.AuthenticatorKey);
+        }
+
+        public Task ReplaceCodesAsync(AppUser user, IEnumerable<string> recoveryCodes, CancellationToken cancellationToken)
+        {
+            _recoveryCodes[user.Id] = recoveryCodes.Select(rc => new RecoveryCode { Code = rc, Redeemed = false });
+
+            return Task.CompletedTask;
+        }
+
+        public async Task<bool> RedeemCodeAsync(AppUser user, string code, CancellationToken cancellationToken)
+        {
+            var codes = await GetCodesAsync(user);
+            var unRedeemedCodes = codes.Where(c => !c.Redeemed);           
+            var recoveryCode = unRedeemedCodes.FirstOrDefault(rc => rc.Code == code);
+            
+            if (recoveryCode is not null)
+            {
+                recoveryCode.Redeemed = true;
+                
+                return true;
+            }
+            
+            return false;
+        }
+
+        public async Task<int> CountCodesAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            var codes = await GetCodesAsync(user);
+            var unRedeemedCodes = codes.Where(c => !c.Redeemed);
+            
+            return unRedeemedCodes.Count();
+        }
+
+        public Task<IEnumerable<RecoveryCode>> GetCodesAsync(AppUser user)
+        {
+            var codes = _recoveryCodes.ContainsKey(user.Id)
+                ? _recoveryCodes[user.Id]
+                : Enumerable.Empty<RecoveryCode>();
+
+            return Task.FromResult(codes);
         }
     }
 }
