@@ -4,6 +4,7 @@ using ExampleApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace ExampleApp.Pages
@@ -13,12 +14,18 @@ namespace ExampleApp.Pages
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly SmsSender _smsSender;
+        private readonly ILogger<SignInModel> _logger;
 
-        public SignInTwoFactorModel(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, SmsSender smsSender)
+        public SignInTwoFactorModel(
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
+            SmsSender smsSender,
+            ILogger<SignInModel> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _smsSender = smsSender;
+            _logger = logger;
         }
 
         public bool IsAuthenticatorEnabled { get; set; }
@@ -68,6 +75,8 @@ namespace ExampleApp.Pages
 
                 if (result.Succeeded)
                 {
+                    _logger.LogInformation("User {UserName} signed in.", user.UserName);
+
                     return LocalRedirect(returnUrl ?? "/");
                 }
                 else if (result.IsLockedOut)
