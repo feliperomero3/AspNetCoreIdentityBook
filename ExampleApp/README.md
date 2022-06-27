@@ -23,6 +23,11 @@ and implement many of the interfaces that ASP.NET Core Identity uses.
 1. Press F5 to start the application.
 1. Open your browser and go to <https://localhost:44324> (if the browser is not launched automatically).
 
+## Screen captures
+
+![Users page](../Assets/example-app-users.png)  
+_Users page_
+
 ## License
 
 [MIT License](../LICENSE)
