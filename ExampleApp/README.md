@@ -28,6 +28,21 @@ and implement many of the interfaces that ASP.NET Core Identity uses.
 ![Users page](../Assets/example-app-users.png)  
 _Users page_
 
+![User edit page](../Assets/example-app-users-edit-page.png)  
+_User edit page_
+
+![User roles page](../Assets/example-app-users-roles-page.png)  
+_User roles page_
+
+![User claims page](../Assets/example-app-users-claims-page.png)  
+_User claims page_
+
+![Sign in page](../Assets/example-app-signin-page.png)  
+_Sign in page_
+
+![Authenticator page](../Assets/example-app-authenticator-page.png)  
+_Authenticator page_
+
 ## License
 
 [MIT License](../LICENSE)
