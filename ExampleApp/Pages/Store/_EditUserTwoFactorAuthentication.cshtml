@@ -10,3 +10,13 @@
         </td>
     </tr>
 }
+@if (UserManager.SupportsUserTwoFactorRecoveryCodes)
+{
+    <tr>
+        <td>Recovery Codes</td>
+        <td>
+            @(await UserManager.CountRecoveryCodesAsync(Model)) codes remaining
+            <a class="btn btn-sm btn-secondary align-top" asp-page="RecoveryCodes" asp-route-id="@Model.Id">Change</a>
+        </td>
+    </tr>
+}

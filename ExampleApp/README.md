@@ -43,6 +43,9 @@ _Sign in page_
 ![Authenticator page](../Assets/example-app-authenticator-page.png)  
 _Authenticator page_
 
+![Recovery codes page](../Assets/example-app-recovery-codes-page.png)  
+_Recovery codes page_
+
 ## License
 
 [MIT License](../LICENSE)
