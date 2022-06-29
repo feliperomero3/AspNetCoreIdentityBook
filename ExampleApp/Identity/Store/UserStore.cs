@@ -374,18 +374,21 @@ namespace ExampleApp.Identity.Store
 
         public async Task<bool> RedeemCodeAsync(AppUser user, string code, CancellationToken cancellationToken)
         {
-            var codes = await GetCodesAsync(user);
-            var unRedeemedCodes = codes.Where(c => !c.Redeemed);           
-            var recoveryCode = unRedeemedCodes.FirstOrDefault(rc => rc.Code == code);
+            var codes = (await GetCodesAsync(user)).ToList();
+            var recoveryCode = codes.FirstOrDefault(rc => !rc.Redeemed && rc.Code == code);
             
             if (recoveryCode is not null)
             {
                 recoveryCode.Redeemed = true;
                 
-                return true;
+                _recoveryCodes.Remove(user.Id);
+               
+                _recoveryCodes.Add(user.Id, codes);
+
+                return await Task.FromResult(true);
             }
-            
-            return false;
+
+            return await Task.FromResult(false);
         }
 
         public async Task<int> CountCodesAsync(AppUser user, CancellationToken cancellationToken)
@@ -393,7 +396,7 @@ namespace ExampleApp.Identity.Store
             var codes = await GetCodesAsync(user);
             var unRedeemedCodes = codes.Where(c => !c.Redeemed);
             
-            return unRedeemedCodes.Count();
+            return await Task.FromResult(unRedeemedCodes.Count());
         }
 
         public Task<IEnumerable<RecoveryCode>> GetCodesAsync(AppUser user)
