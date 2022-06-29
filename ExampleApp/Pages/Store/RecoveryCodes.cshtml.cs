@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ExampleApp.Identity;
@@ -21,7 +22,7 @@ namespace ExampleApp.Pages.Store
 
         public AppUser AppUser { get; set; }
 
-        public RecoveryCode[] Codes { get; set; }
+        public RecoveryCode[] Codes { get; set; } = Array.Empty<RecoveryCode>();
 
         public int RemainingCodes { get; set; }
 
