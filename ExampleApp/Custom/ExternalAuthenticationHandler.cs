@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace ExampleApp.Custom
 {
@@ -17,9 +19,29 @@ namespace ExampleApp.Custom
             return Task.FromResult(AuthenticateResult.NoResult());
         }
 
-        public Task ChallengeAsync(AuthenticationProperties properties)
+        public async Task ChallengeAsync(AuthenticationProperties properties)
         {
-            return Task.CompletedTask;
+            var identity = new ClaimsIdentity(_scheme.Name);
+
+            identity.AddClaims(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, "333dc12a-f941-4aec-a257-0c25a707bbff"),
+                new Claim(ClaimTypes.Email, "alice@example.com"),
+                new Claim(ClaimTypes.Name, "Alice")
+            });
+
+            var principal = new ClaimsPrincipal(identity);
+
+            /* The IdentityConstants.ExternalScheme is used to sign in the external user
+             * to prepare for the next phase in the process.
+             * The other arguments to the SignInAsync method are the ClaimsPrincipal object
+             * and the AuthenticationProperties object, which ensures that the state data
+             * received by the handler is preserved.
+             * Once the external user has been signed in, the handler issues a redirection
+             * to the URL specified by the AuthenticationProperties parameter's RedirectUri method. */
+            await _context.SignInAsync(IdentityConstants.ExternalScheme, principal, properties);
+
+            _context.Response.Redirect(properties.RedirectUri);
         }
 
         public Task ForbidAsync(AuthenticationProperties properties)

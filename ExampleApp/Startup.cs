@@ -24,7 +24,8 @@ namespace ExampleApp
                 options.AccessDeniedPath = $"/signin/{StatusCodes.Status403Forbidden}";
             })
             .AddCookie(IdentityConstants.TwoFactorUserIdScheme)
-            .AddCookie(IdentityConstants.TwoFactorRememberMeScheme);
+            .AddCookie(IdentityConstants.TwoFactorRememberMeScheme)
+            .AddCookie(IdentityConstants.ExternalScheme);
 
             services.AddSingleton<RoleStore>();
             services.AddSingleton<UserStore>();
