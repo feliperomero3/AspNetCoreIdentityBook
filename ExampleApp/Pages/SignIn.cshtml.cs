@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using ExampleApp.Identity;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -26,6 +28,9 @@ namespace ExampleApp.Pages
         }
 
         public SelectList Users => new(_userManager.Users.OrderBy(u => u.EmailAddress), "EmailAddress", "EmailAddress");
+
+        public IEnumerable<AuthenticationScheme> GetExternalAuthenticationSchemesAsync() =>
+            _signInManager.GetExternalAuthenticationSchemesAsync().GetAwaiter().GetResult();
 
         public string Username { get; set; }
 

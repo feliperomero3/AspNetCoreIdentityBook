@@ -13,14 +13,18 @@ namespace ExampleApp
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(IdentityConstants.ApplicationScheme)
-                .AddCookie(IdentityConstants.ApplicationScheme, options =>
-                {
-                    options.LoginPath = "/signin";
-                    options.AccessDeniedPath = $"/signin/{StatusCodes.Status403Forbidden}";
-                })
-                .AddCookie(IdentityConstants.TwoFactorUserIdScheme)
-                .AddCookie(IdentityConstants.TwoFactorRememberMeScheme);
+            services.AddAuthentication(opts =>
+            {
+                opts.DefaultScheme = IdentityConstants.ApplicationScheme;
+                opts.AddScheme<ExternalAuthenticationHandler>("demoAuth", "Demo Service");
+            })
+            .AddCookie(IdentityConstants.ApplicationScheme, options =>
+            {
+                options.LoginPath = "/signin";
+                options.AccessDeniedPath = $"/signin/{StatusCodes.Status403Forbidden}";
+            })
+            .AddCookie(IdentityConstants.TwoFactorUserIdScheme)
+            .AddCookie(IdentityConstants.TwoFactorRememberMeScheme);
 
             services.AddSingleton<RoleStore>();
             services.AddSingleton<UserStore>();
