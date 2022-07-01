@@ -23,7 +23,8 @@ namespace ExampleApp.Identity.Store
         IUserLockoutStore<AppUser>,
         IUserTwoFactorStore<AppUser>,
         IUserAuthenticatorKeyStore<AppUser>,
-        IUserTwoFactorRecoveryCodeStore<AppUser>
+        IUserTwoFactorRecoveryCodeStore<AppUser>,
+        IUserLoginStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> _users = new ConcurrentDictionary<string, AppUser>();
         private readonly Dictionary<string, IEnumerable<RecoveryCode>> _recoveryCodes = new Dictionary<string, IEnumerable<RecoveryCode>>();
@@ -376,13 +377,13 @@ namespace ExampleApp.Identity.Store
         {
             var codes = (await GetCodesAsync(user)).ToList();
             var recoveryCode = codes.FirstOrDefault(rc => !rc.Redeemed && rc.Code == code);
-            
+
             if (recoveryCode is not null)
             {
                 recoveryCode.Redeemed = true;
-                
+
                 _recoveryCodes.Remove(user.Id);
-               
+
                 _recoveryCodes.Add(user.Id, codes);
 
                 return await Task.FromResult(true);
@@ -395,7 +396,7 @@ namespace ExampleApp.Identity.Store
         {
             var codes = await GetCodesAsync(user);
             var unRedeemedCodes = codes.Where(c => !c.Redeemed);
-            
+
             return await Task.FromResult(unRedeemedCodes.Count());
         }
 
@@ -406,6 +407,42 @@ namespace ExampleApp.Identity.Store
                 : Enumerable.Empty<RecoveryCode>();
 
             return Task.FromResult(codes);
+        }
+
+        public Task AddLoginAsync(AppUser user, UserLoginInfo login, CancellationToken cancellationToken)
+        {
+            if (user.UserLogins == null)
+            {
+                user.UserLogins = new List<UserLoginInfo>();
+            }
+
+            user.UserLogins.Add(login);
+
+            return Task.CompletedTask;
+        }
+
+        public async Task RemoveLoginAsync(AppUser user, string loginProvider, string providerKey, CancellationToken cancellationToken)
+        {
+            var userLogins = await GetLoginsAsync(user, cancellationToken);
+
+            if (userLogins is not null)
+            {
+                user.UserLogins = userLogins.Where(login => !login.LoginProvider.Equals(loginProvider) && !login.ProviderKey.Equals(providerKey)).ToList();
+            }
+        }
+
+        public Task<IList<UserLoginInfo>> GetLoginsAsync(AppUser user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.UserLogins ?? new List<UserLoginInfo>());
+        }
+
+        public Task<AppUser> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
+        {
+            var usersWithLogins = Users.Where(u => u.UserLogins != null && u.UserLogins.Count > 0);
+
+            var userFound = usersWithLogins?.FirstOrDefault(u => u.UserLogins.Any(l => l.LoginProvider == loginProvider && l.ProviderKey == providerKey));
+
+            return Task.FromResult(userFound);
         }
     }
 }

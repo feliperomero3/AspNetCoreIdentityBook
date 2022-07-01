@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace ExampleApp.Identity
 {
@@ -43,5 +44,7 @@ namespace ExampleApp.Identity
         public bool IsAuthenticatorEnabled { get; set; }
 
         public string AuthenticatorKey { get; set; }
+
+        public IList<UserLoginInfo> UserLogins { get; set; }
     }
 }
