@@ -42,11 +42,10 @@ namespace ExampleApp
 
             services.AddIdentityCore<AppUser>(opts =>
             {
-                /* The TokenOptions class uses the DefaultProvider property as the value for the
-                 * ChangeEmailTokenProvider and EmailConfirmationTokenProvider configuration options. This means
-                 * you must use a custom name for your token generator and perform the additional step of setting the
-                 * EmailConfirmationTokenProvider and ChangeEmailTokenProvider options.
-                 */
+                // The TokenOptions class uses the DefaultProvider property as the value for the
+                // ChangeEmailTokenProvider and EmailConfirmationTokenProvider configuration options. This means
+                // you must use a custom name for your token generator and perform the additional step of setting the
+                // EmailConfirmationTokenProvider and ChangeEmailTokenProvider options.
                 opts.Tokens.EmailConfirmationTokenProvider = "SimpleEmail";
                 opts.Tokens.ChangeEmailTokenProvider = "SimpleEmail";
                 opts.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultPhoneProvider;
@@ -59,10 +58,10 @@ namespace ExampleApp
                 opts.SignIn.RequireConfirmedAccount = true;
             })
             .AddTokenProvider<EmailConfirmationTokenGenerator>("SimpleEmail")
-            /* You can use TokenOptions.DefaultPhoneProvider and your generator
-             * will be used as the default generator for phone number confirmations.
-             */
-            .AddTokenProvider<PhoneConfirmationTokenGenerator>(TokenOptions.DefaultPhoneProvider)
+            
+            //You can use TokenOptions.DefaultPhoneProvider and your generator
+            //will be used as the default generator for phone number confirmations.
+            .AddTokenProvider<PhoneConfirmationTokenGenerator>(TokenOptions.DefaultPhoneProvider)            
             .AddTokenProvider<TwoFactorSignInTokenGenerator>(IdentityConstants.TwoFactorUserIdScheme)
             .AddTokenProvider<AuthenticatorTokenProvider<AppUser>>(TokenOptions.DefaultAuthenticatorProvider)
             .AddSignInManager()
@@ -75,8 +74,8 @@ namespace ExampleApp
             services.AddAuthorization(options => AuthorizationPolicies.AddPolicies(options));
 
             services.AddRazorPages();
-
             services.AddControllersWithViews();
+            services.AddOptions<ExternalAuthenticationOptions>();
         }
 
         public void Configure(IApplicationBuilder app)
