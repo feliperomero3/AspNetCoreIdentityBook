@@ -1,8 +1,28 @@
 ﻿@page
 @model ExampleApp.Pages.ExternalSignInModel
 
-@*
- *  This is just placeholder content for the moment because the view part of the page
- *  isn't required until later.
-*@
+@{
+    string returnUrl = Request.Query["returnUrl"].Count == 0 ? "/" : Request.Query["returnUrl"];
+}
+
 <h4 class="bg-info text-white text-center p-2">External Authentication</h4>
+
+@if (Request.Query["error"].Count() > 0)
+{
+    <h5 class="bg-danger text-white text-center m-2 p-2">
+        Something went wrong. You could not be signed into the application.
+    </h5>
+    <h5 class="text-center m-2 p-2">@Request.Query["error"]</h5>
+    <div class="text-center">
+        <a class="btn btn-info text-center" href="@returnUrl">OK</a>
+    </div>
+}
+else
+{
+    <h5 class="text-center">
+        @User.Identity.Name has been authenticated by @Model.ProviderDisplayName
+    </h5>
+    <div class="text-center">
+        <a class="btn btn-info text-center" href="@returnUrl">Continue</a>
+    </div>
+}
