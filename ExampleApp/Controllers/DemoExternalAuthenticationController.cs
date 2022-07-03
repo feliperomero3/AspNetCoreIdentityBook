@@ -24,7 +24,8 @@ namespace ExampleApp.Controllers
                 Name = "Alice",
                 EmailAddress = "alice@example.com",
                 Password = "myexternalpassword",
-                Code = "123456"
+                Code = "123456",
+                Token = "token1"
             },
             new UserInfo
             {
@@ -32,7 +33,8 @@ namespace ExampleApp.Controllers
                 Name = "Dora",
                 EmailAddress = "dora@example.com",
                 Password = "myexternalpassword",
-                Code = "56789"
+                Code = "56789",
+                Token = "token2"
             }
         };
 
@@ -79,6 +81,33 @@ namespace ExampleApp.Controllers
                 }
             }
             return View((info, string.Empty));
+        }
+
+        // The action method locates the user with the specified code and returns the user’s token. In a real
+        // authentication service, the tokens are generated dynamically, which means you cannot rely on always
+        // receiving the same token for a given user.
+        [HttpPost]
+        public ActionResult Exchange([FromBody] ExternalAuthententicationInfo info)
+        {
+            if (info.client_id != _expectedId || info.client_secret != _expectedSecret)
+            {
+                return UnprocessableEntity(new { error = "unauthorized_client" });
+            }
+
+            var user = _users.FirstOrDefault(u => u.Code.Equals(info.code));
+
+            if (user is not null)
+            {
+                return Ok(new
+                {
+                    access_token = user.Token,
+                    expires_in = 3600,
+                    token_type = "Bearer",
+                    scope = info.scope,
+                    state = info.state
+                });
+            }
+            return UnprocessableEntity(new { error = "Invalid authorization code." });
         }
     }
 
