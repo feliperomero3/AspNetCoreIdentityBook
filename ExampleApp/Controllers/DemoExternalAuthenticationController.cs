@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExampleApp.Controllers
@@ -15,7 +12,7 @@ namespace ExampleApp.Controllers
         // The controller defines fields that specify the expected values for the client ID and client secret.
         // In a real external service, each application that has been registered will have an ID and secret,
         // but I need only one set of values to demonstrate the authentication sequence in the ExampleApp project.
-        private static readonly string _expectedID = "MyClientID";
+        private static readonly string _expectedId = "MyClientID";
         private static readonly string _expectedSecret = "MyClientSecret";
 
         private static readonly List<UserInfo> _users = new()
@@ -35,6 +32,29 @@ namespace ExampleApp.Controllers
                 Password = "myexternalpassword"
             }
         };
+
+        // Action method that simulates an external service.
+        // This action will be the target of the redirection.
+        public ActionResult Authenticate([FromQuery] ExternalAuthententicationInfo info)
+        {
+            return (_expectedId == info.client_id)
+                ? View((info, string.Empty))
+                : View((info, "Unknown Client"));
+        }
+    }
+
+    public class ExternalAuthententicationInfo
+    {
+#pragma warning disable IDE1006 // Naming Styles
+        public string client_id { get; set; }
+        public string client_secret { get; set; }
+        public string redirect_uri { get; set; }
+        public string scope { get; set; }
+        public string state { get; set; }
+        public string response_type { get; set; }
+        public string grant_type { get; set; }
+        public string code { get; set; }
+#pragma warning restore IDE1006 // Naming Styles
     }
 
     public class UserInfo

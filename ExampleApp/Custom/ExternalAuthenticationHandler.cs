@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Security.Claims;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
 namespace ExampleApp.Custom
@@ -13,15 +13,19 @@ namespace ExampleApp.Custom
     // code to compile.
     public class ExternalAuthenticationHandler : IAuthenticationHandler
     {
+        private readonly IDataProtectionProvider _dataProtection;
         private HttpContext _context;
-        private AuthenticationScheme _scheme;
 
-        public ExternalAuthenticationHandler(IOptions<ExternalAuthenticationOptions> options)
+        public ExternalAuthenticationHandler(
+            IOptions<ExternalAuthenticationOptions> options,
+            IDataProtectionProvider dataProtection)
         {
             Options = options.Value ?? throw new ArgumentNullException(nameof(options));
+            _dataProtection = dataProtection ?? throw new ArgumentNullException(nameof(dataProtection));
         }
 
-        public ExternalAuthenticationOptions Options { get; private set; }
+        public ExternalAuthenticationOptions Options { get; protected set; }
+        public PropertiesDataFormat PropertiesFormatter { get; protected set; }
 
         public Task<AuthenticateResult> AuthenticateAsync()
         {
@@ -30,29 +34,7 @@ namespace ExampleApp.Custom
 
         public async Task ChallengeAsync(AuthenticationProperties properties)
         {
-            // TODO: authentication implementation
-
-            var identity = new ClaimsIdentity(_scheme.Name);
-
-            identity.AddClaims(new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, "333dc12a-f941-4aec-a257-0c25a707bbff"),
-                new Claim(ClaimTypes.Email, "alice@example.com"),
-                new Claim(ClaimTypes.Name, "Alice")
-            });
-
-            var principal = new ClaimsPrincipal(identity);
-
-            // The IdentityConstants.ExternalScheme is used to sign in the external user
-            // to prepare for the next phase in the process.
-            // The other arguments to the SignInAsync method are the ClaimsPrincipal object
-            // and the AuthenticationProperties object, which ensures that the state data
-            // received by the handler is preserved.
-            // Once the external user has been signed in, the handler issues a redirection
-            // to the URL specified by the AuthenticationProperties parameter's RedirectUri method.
-            await _context.SignInAsync(IdentityConstants.ExternalScheme, principal, properties);
-
-            _context.Response.Redirect(properties.RedirectUri);
+            _context.Response.Redirect(await GetAuthenticationUrl(properties));
         }
 
         public Task ForbidAsync(AuthenticationProperties properties)
@@ -62,10 +44,28 @@ namespace ExampleApp.Custom
 
         public Task InitializeAsync(AuthenticationScheme scheme, HttpContext context)
         {
-            _scheme = scheme;
             _context = context;
 
+            var purpose = typeof(ExternalAuthenticationOptions).FullName;
+            var protector = _dataProtection.CreateProtector(purpose);
+
+            PropertiesFormatter = new PropertiesDataFormat(protector);
+
             return Task.CompletedTask;
+        }
+
+        protected virtual Task<string> GetAuthenticationUrl(AuthenticationProperties properties)
+        {
+            var queryStringValues = new Dictionary<string, string>
+            {
+                { "client_id", Options.ClientId },
+                { "redirect_uri", Options.RedirectRoot + Options.RedirectPath },
+                { "scope", Options.Scope },
+                { "response_type", "code" },
+                { "state", PropertiesFormatter.Protect(properties) }
+            };
+
+            return Task.FromResult(Options.AuthenticationUrl + QueryString.Create(queryStringValues));
         }
     }
 }
