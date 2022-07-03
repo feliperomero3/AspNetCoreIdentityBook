@@ -9,9 +9,9 @@ using Microsoft.Extensions.Options;
 namespace ExampleApp.Custom
 {
     // An authentication handler that returns canned results, without actually performing authentication.
-    // This is a minimal implementation of the IAuthenticationHandler interface that contains just enough
-    // code to compile.
-    public class ExternalAuthenticationHandler : IAuthenticationHandler
+    // The authentication handler needs to be able to receive the redirected request. ASP.NET Core defines the
+    // IAuthenticationRequestHandler interface, which is derived from the IAuthenticationHandler interface.
+    public class ExternalAuthenticationHandler : IAuthenticationRequestHandler
     {
         private readonly IDataProtectionProvider _dataProtection;
         private HttpContext _context;
@@ -40,6 +40,24 @@ namespace ExampleApp.Custom
         public Task ForbidAsync(AuthenticationProperties properties)
         {
             return Task.CompletedTask;
+        }
+
+        // The HandleRequestAsync method is called automatically by the ASP.NET Core authentication
+        // middleware and allows authentication handlers to intercept requests without the need to create custom
+        // middleware classes or endpoints.
+        public async Task<bool> HandleRequestAsync()
+        {
+            if (_context.Request.Path.Equals(Options.RedirectPath))
+            {
+                var authCode = await GetAuthenticationCode();
+                return true;
+            }
+            return false;
+        }
+
+        private Task<string> GetAuthenticationCode()
+        {
+            return Task.FromResult(_context.Request.Query["code"].ToString());
         }
 
         public Task InitializeAsync(AuthenticationScheme scheme, HttpContext context)

@@ -23,14 +23,16 @@ namespace ExampleApp.Controllers
                 Id = "1",
                 Name = "Alice",
                 EmailAddress = "alice@example.com",
-                Password = "myexternalpassword"
+                Password = "myexternalpassword",
+                Code = "123456"
             },
             new UserInfo
             {
                 Id = "2",
                 Name = "Dora",
                 EmailAddress = "dora@example.com",
-                Password = "myexternalpassword"
+                Password = "myexternalpassword",
+                Code = "56789"
             }
         };
 
@@ -47,7 +49,7 @@ namespace ExampleApp.Controllers
         // The ASP.NET Core Identity application doesn’t participate in the external authentication process,
         // which is conducted privately between the user and the external authentication service.
         [HttpPost]
-        public IActionResult Authenticate(ExternalAuthententicationInfo info, string email, string password)
+        public ActionResult Authenticate(ExternalAuthententicationInfo info, string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
@@ -56,9 +58,20 @@ namespace ExampleApp.Controllers
             else
             {
                 var user = _users.FirstOrDefault(u => u.EmailAddress.Equals(email) && u.Password.Equals(password));
-                if (user != null)
+                if (user is not null)
                 {
                     // User has been successfully authenticated.
+
+                    // The URL to which the browser is redirected is determined using the redirect_uri, scope, and state
+                    // values provided by the authentication handler in step 1.
+                    // The query string also includes a code value, which I have defined statically for each user.
+                    // In a real authentication service, the code values are generated dynamically.
+                    var url = info.redirect_uri
+                        + $"?code={user.Code}"
+                        + $"&scope={info.scope}"
+                        + $"&state={info.state}";
+
+                    return base.LocalRedirect(url);
                 }
                 else
                 {
