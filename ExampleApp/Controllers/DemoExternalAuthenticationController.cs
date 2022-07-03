@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExampleApp.Controllers
@@ -40,6 +41,31 @@ namespace ExampleApp.Controllers
             return (_expectedId == info.client_id)
                 ? View((info, string.Empty))
                 : View((info, "Unknown Client"));
+        }
+
+        // Action method to receive the credentials provided by the user and validate them.
+        // The ASP.NET Core Identity application doesn’t participate in the external authentication process,
+        // which is conducted privately between the user and the external authentication service.
+        [HttpPost]
+        public IActionResult Authenticate(ExternalAuthententicationInfo info, string email, string password)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            {
+                ModelState.AddModelError(string.Empty, "Email and password required");
+            }
+            else
+            {
+                var user = _users.FirstOrDefault(u => u.EmailAddress.Equals(email) && u.Password.Equals(password));
+                if (user != null)
+                {
+                    // User has been successfully authenticated.
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Email or password is incorrect.");
+                }
+            }
+            return View((info, string.Empty));
         }
     }
 
