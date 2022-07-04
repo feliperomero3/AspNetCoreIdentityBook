@@ -17,5 +17,7 @@
 
         public virtual string ErrorUrlTemplate { get; set; } = "/ExternalSignin?error={0}";
 
+        public virtual string UserInfoUrl { get; set; }
+            = "https://localhost:44324/DemoExternalAuthentication/Userinfo";
     }
 }

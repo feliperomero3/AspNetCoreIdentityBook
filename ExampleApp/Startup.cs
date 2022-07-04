@@ -76,6 +76,7 @@ namespace ExampleApp
             services.AddRazorPages();
             services.AddControllersWithViews();
             services.AddOptions<ExternalAuthenticationOptions>();
+            services.AddHttpClient();
         }
 
         public void Configure(IApplicationBuilder app)

@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -20,17 +23,21 @@ namespace ExampleApp.Custom
     public class ExternalAuthenticationHandler : IAuthenticationRequestHandler
     {
         private readonly IDataProtectionProvider _dataProtection;
+        private readonly HttpClient _httpClient;
         private readonly ILogger<ExternalAuthenticationHandler> _logger;
         private HttpContext _context;
+        private AuthenticationScheme _scheme;
 
         public ExternalAuthenticationHandler(
             IOptions<ExternalAuthenticationOptions> options,
             IDataProtectionProvider dataProtection,
+            HttpClient httpClient,
             ILogger<ExternalAuthenticationHandler> logger)
         {
             Options = options.Value ?? throw new ArgumentNullException(nameof(options));
             _dataProtection = dataProtection ?? throw new ArgumentNullException(nameof(dataProtection));
-            _logger = logger;
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public ExternalAuthenticationOptions Options { get; protected set; }
@@ -64,13 +71,69 @@ namespace ExampleApp.Custom
 
                 if (!string.IsNullOrEmpty(token))
                 {
-                    // TODO: Process token.
+                    var claims = await GetUserInfo(token);
+                    if (claims != null)
+                    {
+                        var identity = new ClaimsIdentity(_scheme.Name);
+
+                        identity.AddClaims(claims);
+
+                        var claimsPrincipal = new ClaimsPrincipal(identity);
+                        var props = PropertiesFormatter.Unprotect(state);
+
+                        await _context.SignInAsync(IdentityConstants.ExternalScheme, claimsPrincipal, props);
+
+                        var message = "External authentication: User {Name} authenticated successfully.";
+                        
+                        _logger.LogInformation(message, claimsPrincipal.Identity.Name);
+
+                        _context.Response.Redirect(props.RedirectUri);
+
+                        return true;
+                    }
                 }
                 _context.Response.Redirect(string.Format(Options.ErrorUrlTemplate, ErrorMessage));
 
                 return true;
             }
             return false;
+        }
+
+        protected virtual async Task<IEnumerable<Claim>> GetUserInfo(string token)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Get, Options.UserInfoUrl);
+
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.SendAsync(message);
+            var jsonData = await response.Content.ReadAsStringAsync();
+            var jsonDoc = JsonDocument.Parse(jsonData);
+
+            var error = jsonDoc.RootElement.GetString("error");
+            if (error != null)
+            {
+                ErrorMessage = "User Data Error";
+
+                _logger.LogError(ErrorMessage);
+                _logger.LogError(jsonData);
+
+                return null;
+            }
+            else
+            {
+                return GetClaims(jsonDoc);
+            }
+        }
+
+        protected virtual IEnumerable<Claim> GetClaims(JsonDocument jsonDoc)
+        {
+            var claims = new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, jsonDoc.RootElement.GetString("id")),
+                new Claim(ClaimTypes.Name, jsonDoc.RootElement.GetString("name")),
+                new Claim(ClaimTypes.Email, jsonDoc.RootElement.GetString("emailAddress"))
+            };
+            return claims;
         }
 
         protected virtual Task<string> GetAuthenticationCode()
@@ -81,11 +144,10 @@ namespace ExampleApp.Custom
         protected virtual async Task<(string code, string state)> GetAccessToken(string code)
         {
             var state = (string)_context.Request.Query["state"];
-            var httpClient = new HttpClient();
 
-            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 
-            var response = await httpClient.PostAsJsonAsync(Options.ExchangeUrl,
+            var response = await _httpClient.PostAsJsonAsync(Options.ExchangeUrl,
                 new
                 {
                     code = code,
@@ -116,6 +178,7 @@ namespace ExampleApp.Custom
         public Task InitializeAsync(AuthenticationScheme scheme, HttpContext context)
         {
             _context = context;
+            _scheme = scheme;
 
             var purpose = typeof(ExternalAuthenticationOptions).FullName;
             var protector = _dataProtection.CreateProtector(purpose);

@@ -38,6 +38,16 @@ namespace ExampleApp.Controllers
             }
         };
 
+        public class UserInfo
+        {
+            public string Id { get; set; }
+            public string Name { get; set; }
+            public string EmailAddress { get; set; }
+            public string Password { get; set; }
+            public string Code { get; set; }
+            public string Token { get; set; }
+        }
+
         // Action method that simulates an external service.
         // This action will be the target of the redirection.
         public ActionResult Authenticate([FromQuery] ExternalAuthententicationInfo info)
@@ -109,6 +119,25 @@ namespace ExampleApp.Controllers
             }
             return UnprocessableEntity(new { error = "Invalid authorization code." });
         }
+
+        // No other information needs to be included in the request because the authentication service
+        // can use the tokens it issues to determine which user and application a token relates to.
+        // The data that the application receives depends on the authentication service and the scope that has been requested.
+        // The data that this example controller produces is simpler but will be sufficient for this chapter.
+        [HttpGet("Userinfo")]
+        public ActionResult GetUserinfo([FromHeader] string authorization)
+        {
+            string token = authorization?[7..];
+            var user = _users.FirstOrDefault(user => user.Token.Equals(token));
+            if (user is not null)
+            {
+                return Json(new { user.Id, user.EmailAddress, user.Name });
+            }
+            else
+            {
+                return Json(new { error = "invalid_token" });
+            }
+        }
     }
 
     public class ExternalAuthententicationInfo
@@ -123,15 +152,5 @@ namespace ExampleApp.Controllers
         public string grant_type { get; set; }
         public string code { get; set; }
 #pragma warning restore IDE1006 // Naming Styles
-    }
-
-    public class UserInfo
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string EmailAddress { get; set; }
-        public string Password { get; set; }
-        public string Code { get; set; }
-        public string Token { get; set; }
     }
 }
