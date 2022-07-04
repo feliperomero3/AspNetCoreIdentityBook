@@ -1,4 +1,4 @@
-﻿@model (ExampleApp.Controllers.ExternalAuthententicationInfo info, string error)
+﻿@model (ExampleApp.Custom.ExternalAuthententicationInfo info, string error)
 
 @*
     This view simulates the response from the external authentication service and contains a form that
@@ -8,7 +8,7 @@
 
 @{
     IEnumerable<(string, string)> keyValuePairs =
-        typeof(ExampleApp.Controllers.ExternalAuthententicationInfo)
+        typeof(ExampleApp.Custom.ExternalAuthententicationInfo)
             .GetProperties()
             .Select(pi => (pi.Name, pi.GetValue(Model.info)?.ToString()));
 }

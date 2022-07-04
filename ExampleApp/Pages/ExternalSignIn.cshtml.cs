@@ -26,7 +26,7 @@ namespace ExampleApp.Pages
 
         public ActionResult OnPost(string providerName, string returnUrl = "/")
         {
-            /* There two levels of redirection to be handled when preparing for external authentication.
+            /* There are two levels of redirection to be handled when preparing for external authentication.
              * The standard signin process captures the URL that the user requested that led to the challenge response.
              * This value is added as a query string parameter of the URL to which the authentication handler should redirect the
              * browser after the user has been authenticated */
@@ -42,14 +42,18 @@ namespace ExampleApp.Pages
             var info = await _signInManager.GetExternalLoginInfoAsync();
             var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
 
-            if (user == null)
+            if (user is null)
             {
                 var externalEmail = info.Principal.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
 
                 user = await _userManager.FindByEmailAsync(externalEmail);
 
-                if (user == null)
+                if (user is null)
                 {
+                    var message = "User with external email {externalEmail} was not found in the local user store.";
+                    
+                    _logger.LogInformation(message, externalEmail);
+
                     return RedirectToPage("/ExternalAccountConfirm", new { returnUrl });
                 }
                 else

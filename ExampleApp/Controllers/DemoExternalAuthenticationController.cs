@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using ExampleApp.Custom;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace ExampleApp.Controllers
 {
@@ -48,6 +51,13 @@ namespace ExampleApp.Controllers
             public string Token { get; set; }
         }
 
+        public DemoExternalAuthenticationController(IOptions<ExternalAuthenticationOptions> options)
+        {
+            Options = options.Value ?? throw new ArgumentNullException(nameof(options));
+        }
+
+        public ExternalAuthenticationOptions Options { get; private set; }
+
         // Action method that simulates an external service.
         // This action will be the target of the redirection.
         public ActionResult Authenticate([FromQuery] ExternalAuthententicationInfo info)
@@ -58,14 +68,18 @@ namespace ExampleApp.Controllers
         }
 
         // Action method to receive the credentials provided by the user and validate them.
-        // The ASP.NET Core Identity application doesn’t participate in the external authentication process,
+        // The ASP.NET Core Identity application doesn't participate in the external authentication process,
         // which is conducted privately between the user and the external authentication service.
         [HttpPost]
         public ActionResult Authenticate(ExternalAuthententicationInfo info, string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                ModelState.AddModelError(string.Empty, "Email and password required");
+                ModelState.AddModelError(string.Empty, "Email and password required.");
+            }
+            else if (info.redirect_uri != Options.RedirectRoot + Options.RedirectPath)
+            {
+                ModelState.AddModelError(string.Empty, "invalid redirect_uri.");
             }
             else
             {
@@ -83,7 +97,8 @@ namespace ExampleApp.Controllers
                         + $"&scope={info.scope}"
                         + $"&state={info.state}";
 
-                    return base.LocalRedirect(url);
+                    // Already validated that redirect_uri matches the registered url in a previous step.
+                    return Redirect(url);
                 }
                 else
                 {
@@ -93,9 +108,9 @@ namespace ExampleApp.Controllers
             return View((info, string.Empty));
         }
 
-        // The action method locates the user with the specified code and returns the user’s token. In a real
-        // authentication service, the tokens are generated dynamically, which means you cannot rely on always
-        // receiving the same token for a given user.
+        // The action method locates the user with the specified code and returns the user's token.
+        // In a real authentication service, the tokens are generated dynamically, which means
+        // you cannot rely on always receiving the same token for a given user.
         [HttpPost]
         public ActionResult Exchange([FromBody] ExternalAuthententicationInfo info)
         {
@@ -106,51 +121,33 @@ namespace ExampleApp.Controllers
 
             var user = _users.FirstOrDefault(u => u.Code.Equals(info.code));
 
-            if (user is not null)
+            if (user is null)
             {
-                return Ok(new
-                {
-                    access_token = user.Token,
-                    expires_in = 3600,
-                    token_type = "Bearer",
-                    scope = info.scope,
-                    state = info.state
-                });
+                return UnprocessableEntity(new { error = "Invalid authorization code." });
             }
-            return UnprocessableEntity(new { error = "Invalid authorization code." });
+
+            return Ok(new
+            {
+                access_token = user.Token,
+                expires_in = 3600,
+                token_type = "Bearer",
+                scope = info.scope,
+                state = info.state
+            });
         }
 
         // No other information needs to be included in the request because the authentication service
         // can use the tokens it issues to determine which user and application a token relates to.
         // The data that the application receives depends on the authentication service and the scope that has been requested.
         // The data that this example controller produces is simpler but will be sufficient for this chapter.
-        [HttpGet("Userinfo")]
-        public ActionResult GetUserinfo([FromHeader] string authorization)
+        public ActionResult Userinfo([FromHeader] string authorization)
         {
-            string token = authorization?[7..];
+            var token = authorization?[7..];
             var user = _users.FirstOrDefault(user => user.Token.Equals(token));
-            if (user is not null)
-            {
-                return Json(new { user.Id, user.EmailAddress, user.Name });
-            }
-            else
-            {
-                return Json(new { error = "invalid_token" });
-            }
-        }
-    }
 
-    public class ExternalAuthententicationInfo
-    {
-#pragma warning disable IDE1006 // Naming Styles
-        public string client_id { get; set; }
-        public string client_secret { get; set; }
-        public string redirect_uri { get; set; }
-        public string scope { get; set; }
-        public string state { get; set; }
-        public string response_type { get; set; }
-        public string grant_type { get; set; }
-        public string code { get; set; }
-#pragma warning restore IDE1006 // Naming Styles
+            return user is not null
+                ? Json(new { user.Id, user.EmailAddress, user.Name })
+                : Json(new { error = "invalid_token" });
+        }
     }
 }

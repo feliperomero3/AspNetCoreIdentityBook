@@ -62,7 +62,7 @@ else if (!string.IsNullOrEmpty(Model.Message))
                         {
                             <div class="mt-2 text-center">
                                 <button class="btn btn-block btn-secondary m-1 mx-5" type="submit"
-                                    asp-page="/ExternalSignin"
+                                    asp-page="/ExternalSignIn"
                                     asp-route-returnUrl="@Request.Query["returnUrl"]"
                                     asp-route-providername="@scheme.Name">
                                     @scheme.DisplayName

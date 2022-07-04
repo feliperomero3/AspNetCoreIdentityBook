@@ -14,7 +14,7 @@ namespace ExampleApp.Identity
 
             var isUserConfirmed = claims.Any(claim => claim.Type == "UserConfirmed" && string.Compare(claim.Value, "true", true) == 0);
 
-            return isInAdminRole || isUserConfirmed;
+            return isInAdminRole || isUserConfirmed || user.IsEmailAddressConfirmed;
         }
     }
 }
