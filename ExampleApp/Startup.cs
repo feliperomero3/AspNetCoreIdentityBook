@@ -33,7 +33,7 @@ namespace ExampleApp
             services.AddSingleton<UserStoreInitializer>();
             services.AddSingleton<ILookupNormalizer, Normalizer>();
             services.AddSingleton<IUserStore<AppUser>>(sp => sp.GetRequiredService<UserStore>());
-            services.AddSingleton<IUserValidator<AppUser>, EmailValidator>();
+            //services.AddSingleton<IUserValidator<AppUser>, EmailValidator>();
             services.AddSingleton<EmailService>();
             services.AddSingleton<SmsSender>();
             services.AddSingleton<IPasswordHasher<AppUser>, SimplePasswordHasher>();
