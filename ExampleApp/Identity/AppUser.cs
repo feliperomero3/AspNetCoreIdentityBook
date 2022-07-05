@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace ExampleApp.Identity
@@ -46,5 +47,10 @@ namespace ExampleApp.Identity
         public string AuthenticatorKey { get; set; }
 
         public IList<UserLoginInfo> UserLogins { get; set; }
+
+        // Identity provides the AuthenticationToken class, which defines Name and Value properties.
+        // To store tokens, I need to be able to keep track of the source of each token, so I have used
+        // a list of (string, AuthenticationToken) tuples for simplicity.
+        public IList<(string provider, AuthenticationToken token)> AuthTokens { get; set; }
     }
 }
