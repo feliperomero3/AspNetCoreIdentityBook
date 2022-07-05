@@ -21,16 +21,29 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav">
-                        <li class="nav-item">
-                            @if (User.Identity.IsAuthenticated)
-                            {
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                                    User
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-page="/Store/PasswordChange">Change Password</a>
+                                    <a class="dropdown-item" asp-page="/Store/PasswordReset">Reset Password</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-page="/LiveClaims">Claims</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/SignOut">Sign Out</a>
-                            }
-                            else
-                            {
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/SignIn">Sign In</a>
-                            }
-                        </li>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
@@ -38,9 +51,6 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-page="/Store/Roles">Roles</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/LiveClaims">Claims</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-page="/Store/UserLockouts">Lockouts</a>
@@ -60,6 +70,8 @@
         <div class="container">
             &copy; 2022 - ExampleApp
         </div>
-    </footer>    
+    </footer>
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
