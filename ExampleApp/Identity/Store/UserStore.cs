@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace ExampleApp.Identity.Store
@@ -24,7 +25,8 @@ namespace ExampleApp.Identity.Store
         IUserTwoFactorStore<AppUser>,
         IUserAuthenticatorKeyStore<AppUser>,
         IUserTwoFactorRecoveryCodeStore<AppUser>,
-        IUserLoginStore<AppUser>
+        IUserLoginStore<AppUser>,
+        IUserAuthenticationTokenStore<AppUser>
     {
         private readonly ConcurrentDictionary<string, AppUser> _users = new ConcurrentDictionary<string, AppUser>();
         private readonly Dictionary<string, IEnumerable<RecoveryCode>> _recoveryCodes = new Dictionary<string, IEnumerable<RecoveryCode>>();
@@ -443,6 +445,51 @@ namespace ExampleApp.Identity.Store
             var userFound = usersWithLogins?.FirstOrDefault(u => u.UserLogins.Any(l => l.LoginProvider == loginProvider && l.ProviderKey == providerKey));
 
             return Task.FromResult(userFound);
+        }
+
+        public Task SetTokenAsync(AppUser user, string loginProvider, string name, string value, CancellationToken cancellationToken)
+        {
+            if (user is null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (user.AuthTokens is null)
+            {
+                user.AuthTokens = new List<(string, AuthenticationToken)>();
+            }
+            user.AuthTokens.Add((loginProvider, new AuthenticationToken
+            {
+                Name = name,
+                Value = value
+            }));
+            return Task.CompletedTask;
+        }
+
+        public Task RemoveTokenAsync(AppUser user, string loginProvider, string name, CancellationToken cancellationToken)
+        {
+            if (user is null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (user.AuthTokens is not null)
+            {
+                user.AuthTokens = user.AuthTokens.Where(t => t.provider != loginProvider && t.token.Name != name).ToList();
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task<string> GetTokenAsync(AppUser user, string loginProvider, string name, CancellationToken cancellationToken)
+        {
+            if (user is null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            var tokenValue = user.AuthTokens?.FirstOrDefault(t => t.provider == loginProvider && t.token.Name == name).token.Value;
+
+            return Task.FromResult(tokenValue);
         }
     }
 }
