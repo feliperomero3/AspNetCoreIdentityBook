@@ -78,6 +78,8 @@ namespace ExampleApp.Pages
 
                         await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
 
+                        await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+
                         return Redirect(ReturnUrl);
                     }
                 }

@@ -81,11 +81,13 @@ namespace ExampleApp.Custom
 
                         var claimsPrincipal = new ClaimsPrincipal(identity);
                         var props = PropertiesFormatter.Unprotect(state);
+                        
+                        props.StoreTokens(new[] { new AuthenticationToken { Name = "access_token", Value = token } });
 
                         await _context.SignInAsync(IdentityConstants.ExternalScheme, claimsPrincipal, props);
 
                         var message = "External authentication: {ExternalScheme} signed in successfully.";
-                        
+
                         _logger.LogInformation(message, IdentityConstants.ExternalScheme);
 
                         _context.Response.Redirect(props.RedirectUri);

@@ -64,6 +64,8 @@ namespace ExampleApp.Pages
 
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: false);
 
+            await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+
             if (result.Succeeded)
             {
                 _logger.LogInformation("User {UserName} with Provider {LoginProvider} signed in.", user.UserName, info.LoginProvider);
