@@ -1,3 +1,4 @@
+using ExampleApp.Configurations;
 using ExampleApp.Custom;
 using ExampleApp.Identity;
 using ExampleApp.Identity.Store;
@@ -5,18 +6,27 @@ using ExampleApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExampleApp
 {
     public class Startup
     {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(opts =>
             {
                 opts.DefaultScheme = IdentityConstants.ApplicationScheme;
                 opts.AddScheme<ExternalAuthenticationHandler>("demoAuth", "Demo Service");
+                opts.AddScheme<GoogleAuthenticationHandler>("google", "Google");
             })
             .AddCookie(IdentityConstants.ApplicationScheme, options =>
             {
@@ -77,6 +87,8 @@ namespace ExampleApp
             services.AddControllersWithViews();
             services.AddOptions<ExternalAuthenticationOptions>();
             services.AddHttpClient();
+
+            services.Configure<GoogleOptions>(Configuration.GetSection(GoogleOptions.OptionKey));
         }
 
         public void Configure(IApplicationBuilder app)

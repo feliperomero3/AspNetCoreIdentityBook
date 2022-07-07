@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ExampleApp.Configurations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Logging;
@@ -15,14 +16,17 @@ namespace ExampleApp.Custom
     public class GoogleAuthenticationHandler : ExternalAuthenticationHandler
     {
         private readonly ILogger<GoogleAuthenticationHandler> _logger;
+        private readonly GoogleOptions _options;
 
         public GoogleAuthenticationHandler(
             IOptions<GoogleAuthenticationOptions> options,
             IDataProtectionProvider provider,
             HttpClient httpClient,
-            ILogger<GoogleAuthenticationHandler> logger) : base(options, provider, httpClient, logger)
+            ILogger<GoogleAuthenticationHandler> logger,
+            IOptions<GoogleOptions> googleOptions) : base(options, provider, httpClient, logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _options = googleOptions.Value ?? throw new ArgumentNullException(nameof(googleOptions));
         }
 
         protected override async Task<string> GetAuthenticationUrl(AuthenticationProperties properties)
@@ -55,14 +59,13 @@ namespace ExampleApp.Custom
 
         private bool CheckCredentials()
         {
-            var secret = Options.ClientSecret;
-            var id = Options.ClientId;
-            var defaultVal = "ReplaceMe";
+            Options.ClientId = _options.ClientId;
+            Options.ClientSecret = _options.ClientSecret;
 
-            if (!string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(id) || defaultVal.Equals(secret))
+            if (string.IsNullOrEmpty(Options.ClientId) || string.IsNullOrEmpty(Options.ClientSecret))
             {
-                ErrorMessage = "External Authentication Secret or Client Id not set";
-                _logger.LogError("External Authentication Secret or Client Id not set");
+                ErrorMessage = "External Authentication Secret or Client ID not set.";
+                _logger.LogError("External Authentication Secret or Client ID not set.");
 
                 return false;
             }
