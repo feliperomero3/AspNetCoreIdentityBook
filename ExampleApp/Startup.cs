@@ -27,6 +27,7 @@ namespace ExampleApp
                 opts.DefaultScheme = IdentityConstants.ApplicationScheme;
                 opts.AddScheme<ExternalAuthenticationHandler>("demoAuth", "Demo Service");
                 opts.AddScheme<GoogleAuthenticationHandler>("google", "Google");
+                opts.AddScheme<FacebookAuthenticationHandler>("facebook", "Facebook");
             })
             .AddCookie(IdentityConstants.ApplicationScheme, options =>
             {
@@ -89,6 +90,7 @@ namespace ExampleApp
             services.AddHttpClient();
 
             services.Configure<GoogleOptions>(Configuration.GetSection(GoogleOptions.OptionKey));
+            services.Configure<FacebookOptions>(Configuration.GetSection(FacebookOptions.OptionKey));
         }
 
         public void Configure(IApplicationBuilder app)
