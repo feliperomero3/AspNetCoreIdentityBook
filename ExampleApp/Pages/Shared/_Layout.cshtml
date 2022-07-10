@@ -25,13 +25,13 @@
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
-                                    User
+                                    @User.Identity.Name
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" asp-page="/Store/PasswordChange">Change Password</a>
                                     <a class="dropdown-item" asp-page="/Store/PasswordReset">Reset Password</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" asp-page="/LiveClaims">Claims</a>
+                                    <a class="dropdown-item" asp-page="/LiveClaims">Live Claims</a>
                                 </div>
                             </li>
                             <li class="nav-item">
