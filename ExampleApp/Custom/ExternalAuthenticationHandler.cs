@@ -60,8 +60,8 @@ namespace ExampleApp.Custom
         }
 
         // The HandleRequestAsync method is called automatically by the ASP.NET Core authentication
-        // middleware and allows authentication handlers to intercept requests without the need to create custom
-        // middleware classes or endpoints.
+        // middleware and allows authentication handlers to intercept requests without the need to
+        // create custom middleware classes or endpoints.
         // This is where the request to /signin-external gets intercepted.
         public virtual async Task<bool> HandleRequestAsync()
         {
